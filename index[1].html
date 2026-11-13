@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه مدیریت مدرسه فاتحان آینده</title>
+<meta name="description" content="سامانه جامع مدیریت مدرسه فاتحان آینده — نمرات، کارنامه، جنم، قرارگاه‌ها، امتحانات و اطلاعیه‌ها">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233B6BD4'/%3E%3Cstop offset='1' stop-color='%23F08A5D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M32 3 56 12v18c0 15-10 26-24 31C18 56 8 45 8 30V12z' fill='url(%23g)'/%3E%3Cpath d='M32 14l4 9 10 1-7.5 6.5L41 41l-9-5.5L23 41l2.5-10.5L18 24l10-1z' fill='%23050A14'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --bg:#050A14; --bg2:#070D1B; --card:#0F1A30; --card2:#0B1426; --card3:#12203A;
+  --border:#1C2A45; --border2:#27395C;
+  --blue:#1A3F87; --blue-l:#3B6BD4; --blue-xl:#6E97E8;
+  --orange:#F08A5D; --gold:#F5B400; --green:#2FBF8A; --red:#EF5B64; --violet:#8B6FD8;
+  --text:#EDF2FA; --muted:#8EA0BF; --muted2:#5D6E8F;
+  --grad:linear-gradient(135deg,#3B6BD4 0%,#1A3F87 55%,#F08A5D 130%);
+  --grad-o:linear-gradient(135deg,#F08A5D,#F5B400);
+  --grad-g:linear-gradient(135deg,#F5B400,#F08A5D);
+  --shadow:0 18px 50px -18px rgba(0,0,0,.65);
+  --r:20px; --r-s:14px;
+  --font:'Vazirmatn',system-ui,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#F2F5FB; --bg2:#EAEFF8; --card:#FFFFFF; --card2:#F4F7FD; --card3:#EDF2FA;
+  --border:#DCE4F2; --border2:#C6D2E8;
+  --text:#0B1526; --muted:#54648A; --muted2:#8595B5;
+  --shadow:0 18px 45px -22px rgba(20,40,90,.28);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.75}
+::selection{background:rgba(240,138,93,.35)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--blue-l)}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:var(--font);color:var(--text)}
+img{max-width:100%}
+table{border-collapse:collapse;width:100%}
+
+/* ============ BACKGROUND FX ============ */
+.bgfx{position:fixed;inset:0;z-index:-2;overflow:hidden;background:
+  radial-gradient(1100px 600px at 85% -10%,rgba(26,63,135,.28),transparent 60%),
+  radial-gradient(900px 550px at 8% 12%,rgba(240,138,93,.10),transparent 55%),
+  radial-gradient(800px 700px at 50% 115%,rgba(47,191,138,.08),transparent 60%),var(--bg)}
+.bgfx::after{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(rgba(110,151,232,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(110,151,232,.045) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);z-index:-1;opacity:.5;animation:orbFloat 16s ease-in-out infinite}
+.orb1{width:420px;height:420px;background:rgba(59,107,212,.20);top:-120px;left:6%}
+.orb2{width:340px;height:340px;background:rgba(240,138,93,.14);bottom:-90px;right:-60px;animation-delay:-6s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-36px)}}
+
+/* ============ SPLASH ============ */
+#splash{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;gap:22px;align-items:center;justify-content:center;background:var(--bg);transition:opacity .6s,visibility .6s}
+#splash.hide{opacity:0;visibility:hidden}
+#splash .emblem{width:92px;height:92px;animation:emblemIn 1.1s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes emblemIn{from{transform:scale(.4) rotate(-14deg);opacity:0}}
+#splash h1{font-size:26px;font-weight:800}
+#splash .bar{width:210px;height:4px;border-radius:99px;background:var(--border);overflow:hidden}
+#splash .bar i{display:block;height:100%;width:40%;border-radius:99px;background:var(--grad-o);animation:barMove 1s ease-in-out infinite}
+@keyframes barMove{0%{transform:translateX(160%)}100%{transform:translateX(-260%)}}
+
+/* ============ GENERIC ============ */
+.wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-p{padding:24px}
+.glass{background:rgba(15,26,48,.62);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--border)}
+[data-theme="light"] .glass{background:rgba(255,255,255,.7)}
+.h-xl{font-size:clamp(30px,5vw,58px);font-weight:900;line-height:1.25}
+.h-lg{font-size:clamp(22px,3vw,32px);font-weight:800}
+.h-md{font-size:19px;font-weight:800}
+.grad-text{background:linear-gradient(120deg,#6E97E8 10%,#F08A5D 60%,#F5B400 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:12px}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}.mt32{margin-top:32px}
+.mb-1{margin-bottom:8px}
+.ltr{direction:ltr;text-align:left}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.flex{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.hr{height:1px;background:var(--border);margin:18px 0}
+.lucide{width:18px;height:18px;stroke-width:2}
+.empty{padding:44px 20px;text-align:center;color:var(--muted)}
+.empty .lucide{width:44px;height:44px;opacity:.45;margin-bottom:10px}
+.reveal{animation:fadeUp .6s cubic-bezier(.2,.8,.3,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92) translateY(10px)}}
+
+/* ============ BUTTONS ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:14px;font-weight:700;font-size:14px;transition:.25s;white-space:nowrap;border:1px solid transparent}
+.btn .lucide{width:17px;height:17px}
+.btn-primary{background:linear-gradient(135deg,#3B6BD4,#1A3F87);color:#fff;box-shadow:0 10px 26px -10px rgba(59,107,212,.65)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(59,107,212,.8)}
+.btn-accent{background:linear-gradient(135deg,#F08A5D,#E8764B);color:#fff;box-shadow:0 10px 26px -10px rgba(240,138,93,.6)}
+.btn-accent:hover{transform:translateY(-2px)}
+.btn-gold{background:linear-gradient(135deg,#F5B400,#F08A5D);color:#231600}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-ghost{background:var(--card);border-color:var(--border2)}
+.btn-ghost:hover{border-color:var(--blue-l);color:var(--blue-xl)}
+.btn-danger{background:rgba(239,91,100,.14);color:var(--red);border-color:rgba(239,91,100,.35)}
+.btn-danger:hover{background:rgba(239,91,100,.24)}
+.btn-success{background:rgba(47,191,138,.14);color:var(--green);border-color:rgba(47,191,138,.4)}
+.btn-success:hover{background:rgba(47,191,138,.24)}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:11px}
+.btn-sm .lucide{width:15px;height:15px}
+.btn-xs{padding:5px 10px;font-size:11.5px;border-radius:9px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.icon-btn{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:var(--card);border:1px solid var(--border2);transition:.2s}
+.icon-btn:hover{border-color:var(--blue-l);color:var(--blue-xl);transform:translateY(-1px)}
+
+/* ============ CHIPS & BADGES ============ */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--card3);border:1px solid var(--border2)}
+.chip .lucide{width:14px;height:14px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:99px;font-size:11.5px;font-weight:800}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-green{background:rgba(47,191,138,.15);color:var(--green)}
+.p-gold{background:rgba(245,180,0,.15);color:var(--gold)}
+.p-red{background:rgba(239,91,100,.15);color:var(--red)}
+.p-blue{background:rgba(59,107,212,.18);color:var(--blue-xl)}
+.p-orange{background:rgba(240,138,93,.15);color:var(--orange)}
+.p-gray{background:rgba(142,160,191,.15);color:var(--muted)}
+
+/* ============ NAV ============ */
+.nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(5,10,20,.75);border-bottom:1px solid var(--border)}
+[data-theme="light"] .nav{background:rgba(242,245,251,.8)}
+.nav-in{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .emblem{width:42px;height:42px;flex-shrink:0}
+.brand b{font-size:17px;font-weight:900;display:block;line-height:1.3}
+.brand span{font-size:11px;color:var(--muted)}
+.nav-links{display:flex;gap:4px;margin-inline-start:8px}
+.nav-links a{padding:8px 13px;border-radius:11px;font-size:13.5px;font-weight:600;color:var(--muted);transition:.2s}
+.nav-links a:hover,.nav-links a.on{color:var(--text);background:var(--card3)}
+.nav-cta{margin-inline-start:auto;display:flex;gap:9px;align-items:center}
+@media(max-width:900px){.nav-links{display:none}}
+
+/* ============ HERO ============ */
+.hero{padding:74px 0 40px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.25fr .95fr;gap:44px;align-items:center}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr}}
+.date-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.hero p.lead{font-size:16.5px;color:var(--muted);max-width:560px;margin-top:18px}
+.hero-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.hero-card{position:relative;padding:28px;overflow:hidden}
+.hero-card::before{content:"";position:absolute;inset:-40% 30% auto -40%;height:260px;background:radial-gradient(closest-side,rgba(59,107,212,.35),transparent);pointer-events:none}
+.float{animation:floatY 5.5s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ring-wrap{position:relative;width:150px;height:150px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mini-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:15px;background:var(--card2);transition:.25s}
+.mini-row:hover{border-color:var(--border2);transform:translateX(-3px)}
+.mini-ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.marquee{overflow:hidden;border-block:1px solid var(--border);background:var(--card2)}
+.marquee-in{display:flex;gap:38px;padding:11px 0;width:max-content;animation:mq 30s linear infinite;font-size:13px;color:var(--muted)}
+.marquee-in span{display:flex;align-items:center;gap:8px}
+.marquee-in .lucide{width:14px;height:14px;color:var(--orange)}
+@keyframes mq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+/* ============ SECTIONS ============ */
+.sec{padding:56px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.sec-head .sub{color:var(--muted);font-size:14px;margin-top:4px}
+.kpi{padding:20px;position:relative;overflow:hidden;transition:.3s}
+.kpi:hover{transform:translateY(-4px);border-color:var(--border2)}
+.kpi .num{font-size:31px;font-weight:900;line-height:1.2}
+.kpi .lbl{font-size:13px;color:var(--muted)}
+.kpi .ic{position:absolute;left:14px;top:14px;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;opacity:.9}
+.ic-blue{background:rgba(59,107,212,.16);color:var(--blue-xl)}
+.ic-orange{background:rgba(240,138,93,.16);color:var(--orange)}
+.ic-gold{background:rgba(245,180,0,.15);color:var(--gold)}
+.ic-green{background:rgba(47,191,138,.15);color:var(--green)}
+.ic-red{background:rgba(239,91,100,.14);color:var(--red)}
+.ic-violet{background:rgba(139,111,216,.16);color:var(--violet)}
+
+/* ============ FORMS ============ */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px;color:var(--muted)}
+.field label b{color:var(--red)}
+.input,select.input,textarea.input{width:100%;padding:12px 15px;border-radius:13px;border:1.5px solid var(--border2);background:var(--card2);font-size:14px;transition:.2s;outline:none}
+.input:focus{border-color:var(--blue-l);box-shadow:0 0 0 4px rgba(59,107,212,.15)}
+.input::placeholder{color:var(--muted2)}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238EA0BF' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 14px center;padding-left:38px}
+textarea.input{resize:vertical;min-height:110px}
+.input.err{border-color:var(--red);box-shadow:0 0 0 4px rgba(239,91,100,.12)}
+.err-msg{color:var(--red);font-size:12px;margin-top:5px;display:flex;align-items:center;gap:5px}
+.hint{color:var(--muted2);font-size:12px;margin-top:5px}
+.in-wrap{position:relative}
+.in-wrap .lucide{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted2);pointer-events:none}
+.in-wrap .input{padding-right:42px}
+.seg{display:flex;background:var(--card2);border:1px solid var(--border2);border-radius:13px;padding:4px;gap:4px}
+.seg button{flex:1;padding:9px 14px;border-radius:10px;font-size:13px;font-weight:700;color:var(--muted);transition:.2s}
+.seg button.on{background:linear-gradient(135deg,#3B6BD4,#1A3F87);color:#fff;box-shadow:0 6px 16px -6px rgba(59,107,212,.6)}
+.switch{position:relative;width:44px;height:24px;border-radius:99px;background:var(--border2);transition:.25s;flex-shrink:0}
+.switch::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;right:3px;transition:.25s}
+.switch.on{background:var(--green)}
+.switch.on::after{transform:translateX(-20px)}
+
+/* ============ TABLES ============ */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:16px;background:var(--card2)}
+table.tbl th{background:var(--card3);padding:13px 16px;font-size:12.5px;color:var(--muted);font-weight:800;text-align:right;white-space:nowrap;border-bottom:1px solid var(--border)}
+table.tbl td{padding:12px 16px;font-size:13.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+table.tbl tr:last-child td{border-bottom:none}
+table.tbl tbody tr{transition:.15s}
+table.tbl tbody tr:hover{background:rgba(59,107,212,.06)}
+.avatar{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(135deg,#3B6BD4,#8B6FD8);flex-shrink:0}
+.avatar.lg{width:64px;height:64px;font-size:22px;border-radius:19px}
+.score-badge{display:inline-flex;min-width:44px;justify-content:center;padding:4px 10px;border-radius:10px;font-weight:800;font-size:13.5px}
+.sc-hi{background:rgba(47,191,138,.15);color:var(--green)}
+.sc-mid{background:rgba(245,180,0,.14);color:var(--gold)}
+.sc-lo{background:rgba(239,91,100,.14);color:var(--red)}
+
+/* ============ MEDALS / RANKS ============ */
+.medal{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#3a2a00}
+.m1{background:linear-gradient(135deg,#FFE066,#F5B400 55%,#C88A00);box-shadow:0 6px 16px -4px rgba(245,180,0,.55)}
+.m2{background:linear-gradient(135deg,#E8ECF3,#AEB9CC 60%,#8b98ae);color:#26303f;box-shadow:0 6px 16px -6px rgba(180,195,215,.5)}
+.m3{background:linear-gradient(135deg,#F0B08A,#C97B4A 60%,#9c5a30);color:#3a1e08;box-shadow:0 6px 16px -6px rgba(201,123,74,.5)}
+.rank-row{display:flex;align-items:center;gap:13px;padding:13px 17px;border:1px solid var(--border);border-radius:16px;background:var(--card2);transition:.25s}
+.rank-row:hover{transform:translateX(-4px);border-color:var(--border2)}
+.rank-row.top{border-color:rgba(245,180,0,.4);background:linear-gradient(90deg,rgba(245,180,0,.07),var(--card2))}
+
+/* ============ LAYOUT (PANELS) ============ */
+.layout{display:grid;grid-template-columns:262px 1fr;min-height:100vh}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:rgba(8,14,28,.85);backdrop-filter:blur(16px);border-inline-end:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;z-index:55}
+[data-theme="light"] .sidebar{background:rgba(255,255,255,.86)}
+.side-sec{font-size:11px;color:var(--muted2);font-weight:800;padding:14px 12px 7px;letter-spacing:.4px}
+.side-link{display:flex;align-items:center;gap:11px;padding:10.5px 13px;border-radius:13px;font-size:13.5px;font-weight:600;color:var(--muted);transition:.2s;position:relative;margin-bottom:2px}
+.side-link .lucide{width:18px;height:18px}
+.side-link:hover{color:var(--text);background:var(--card3)}
+.side-link.on{color:#fff;background:linear-gradient(135deg,#3B6BD4,#1A3F87);box-shadow:0 8px 20px -8px rgba(59,107,212,.7)}
+.side-link .cnt{margin-inline-start:auto;background:rgba(239,91,100,.9);color:#fff;font-size:10.5px;font-weight:800;min-width:20px;height:20px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.main-col{padding:24px 28px 60px;min-width:0}
+@media(max-width:980px){
+  .sidebar{position:fixed;inset:0 auto 0 0;right:0;width:272px;transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.3,1);box-shadow:-20px 0 60px rgba(0,0,0,.5);height:100dvh}
+  .sidebar.open{transform:none}
+  .main-col{padding:18px 16px 60px}
+}
+.scrim{position:fixed;inset:0;background:rgba(2,5,12,.6);backdrop-filter:blur(3px);z-index:54;opacity:0;visibility:hidden;transition:.3s}
+.scrim.show{opacity:1;visibility:visible}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.page-head h2{font-size:22px;font-weight:900;display:flex;align-items:center;gap:11px}
+.page-head h2 .pi{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.page-head .crumb{font-size:12.5px;color:var(--muted);margin-top:3px}
+.hamb{display:none}
+@media(max-width:980px){.hamb{display:inline-flex}}
+
+/* ============ MODAL & TOAST ============ */
+#modal-root{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px}
+#modal-root.show{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(2,6,14,.7);backdrop-filter:blur(6px);animation:fadeIn .25s}
+@keyframes fadeIn{from{opacity:0}}
+.modal-box{position:relative;width:min(560px,100%);max-height:88vh;overflow-y:auto;background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:22px;padding:26px;animation:scaleIn .35s cubic-bezier(.2,.9,.3,1.15);box-shadow:0 30px 80px -20px rgba(0,0,0,.7)}
+.modal-box.wide{width:min(760px,100%)}
+.modal-box h3{font-size:18px;font-weight:900;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.modal-x{position:absolute;top:18px;left:18px}
+#toast-root{position:fixed;bottom:22px;right:22px;z-index:150;display:flex;flex-direction:column;gap:10px;max-width:min(380px,90vw)}
+.toast{display:flex;align-items:center;gap:11px;padding:13px 17px;border-radius:15px;font-size:13.5px;font-weight:600;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow);animation:toastIn .4s cubic-bezier(.2,.9,.3,1.2)}
+.toast.out{animation:toastOut .35s forwards}
+.t-ok{border-color:rgba(47,191,138,.5)}.t-ok .lucide{color:var(--green)}
+.t-err{border-color:rgba(239,91,100,.5)}.t-err .lucide{color:var(--red)}
+.t-info{border-color:rgba(59,107,212,.5)}.t-info .lucide{color:var(--blue-xl)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.95)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(30px)}}
+
+/* ============ MISC COMPONENTS ============ */
+.timeline{position:relative;padding-inline-start:22px}
+.timeline::before{content:"";position:absolute;right:6px;top:6px;bottom:6px;width:2px;background:var(--border2);border-radius:2px}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-item::before{content:"";position:absolute;right:-20.5px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--blue-l);border:2.5px solid var(--card);box-shadow:0 0 0 3px rgba(59,107,212,.25)}
+.tl-item.gold::before{background:var(--gold);box-shadow:0 0 0 3px rgba(245,180,0,.25)}
+.tl-item.red::before{background:var(--red);box-shadow:0 0 0 3px rgba(239,91,100,.25)}
+.tl-item.green::before{background:var(--green);box-shadow:0 0 0 3px rgba(47,191,138,.25)}
+.base-card{position:relative;overflow:hidden;padding:26px;transition:.35s;cursor:pointer}
+.base-card:hover{transform:translateY(-6px)}
+.base-card::before{content:"";position:absolute;inset:auto -30% -55% -30%;height:190px;background:radial-gradient(closest-side,var(--bc,rgba(59,107,212,.4)),transparent);opacity:.5;transition:.35s}
+.base-card:hover::before{opacity:.9}
+.base-ic{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--bcl,#6E97E8)}
+.base-ic .lucide{width:26px;height:26px}
+.prog{height:9px;border-radius:99px;background:var(--border);overflow:hidden}
+.prog i{display:block;height:100%;border-radius:99px;background:var(--grad-o);transition:width 1s cubic-bezier(.2,.8,.3,1)}
+.news-card{padding:0;overflow:hidden;transition:.3s;display:flex;flex-direction:column}
+.news-card:hover{transform:translateY(-4px);border-color:var(--border2)}
+.news-img{height:150px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.news-img .lucide{width:46px;height:46px;opacity:.8}
+.exam-row{display:flex;align-items:center;gap:14px;padding:15px 18px;border:1px solid var(--border);border-radius:16px;background:var(--card2);transition:.25s}
+.exam-row:hover{border-color:var(--border2);transform:translateX(-3px)}
+.exam-date{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,rgba(59,107,212,.25),rgba(26,63,135,.3));border:1px solid rgba(59,107,212,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.exam-date b{font-size:20px;line-height:1.1}
+.exam-date span{font-size:10.5px;color:var(--muted)}
+.count-chip{background:rgba(240,138,93,.13);color:var(--orange);border:1px solid rgba(240,138,93,.3)}
+.report-card{background:#fff;color:#101828;border-radius:18px;overflow:hidden}
+.print-area{display:none}
+.login-wrap{min-height:calc(100vh - 67px);display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+@media(max-width:920px){.login-wrap{grid-template-columns:1fr}.login-art{display:none}}
+.login-art{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:46px;background:linear-gradient(160deg,#0d1a38,#132a5e 55%,#1A3F87)}
+.login-art::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 80% 10%,rgba(240,138,93,.3),transparent 60%)}
+.login-form-side{display:flex;align-items:center;justify-content:center;padding:42px 22px}
+.login-form{width:min(430px,100%)}
+.footer{border-top:1px solid var(--border);padding:38px 0 30px;background:var(--card2)}
+.step{display:flex;gap:14px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--card2)}
+.step-n{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#3B6BD4,#1A3F87);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+code.kbd{font-family:monospace;background:var(--card3);border:1px solid var(--border2);padding:2px 9px;border-radius:8px;font-size:12.5px;direction:ltr;display:inline-block}
+.merit-big{font-size:44px;font-weight:900;line-height:1.1}
+.tab-bar{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab-bar button{padding:11px 17px;font-size:13.5px;font-weight:700;color:var(--muted);border-bottom:2.5px solid transparent;transition:.2s;white-space:nowrap}
+.tab-bar button.on{color:var(--blue-xl);border-color:var(--blue-l)}
+
+/* ============ PRINT (کارنامه) ============ */
+@media print{
+  body{background:#fff!important}
+  body *{visibility:hidden}
+  .print-area,.print-area *{visibility:visible}
+  .print-area{display:block!important;position:fixed;inset:0;background:#fff;color:#101828;padding:24px;overflow:visible;z-index:999}
+  .print-area .card{border:1px solid #d0d7e2;box-shadow:none}
+}
+@media(max-width:760px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .hero{padding:44px 0 26px}
+  .sec{padding:40px 0}
+}
+</style>
+</head>
+<body>
+<div class="bgfx"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div id="splash">
+  <svg class="emblem" viewBox="0 0 64 64"><defs><linearGradient id="lg0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6BD4"/><stop offset="1" stop-color="#F08A5D"/></linearGradient></defs><path d="M32 3 56 12v18c0 15-10 26-24 31C18 56 8 45 8 30V12z" fill="url(#lg0)"/><path d="M32 14l4 9 10 1-7.5 6.5L41 41l-9-5.5L23 41l2.5-10.5L18 24l10-1z" fill="#050A14"/></svg>
+  <h1>سامانه مدرسه <span class="grad-text">فاتحان آینده</span></h1>
+  <div class="bar"><i></i></div>
+</div>
+
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+"use strict";
+/* ================= UTILITIES ================= */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const FA_D = "۰۱۲۳۴۵۷۸۹";
+const faD = s => String(s ?? "").replace(/[0-9]/g, d => FA_D[+d]);
+const uid = () => "id_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const ROUND2 = n => Math.round(n * 100) / 100;
+
+/* --- Jalali calendar --- */
+const J_MONTHS = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+const J_DAYS = ["یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه","شنبه"];
+function g2j(gy, gm, gd){
+  const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+  let jy=(gy<=1600)?0:979; gy-=(gy<=1600)?621:1600;
+  const gy2=(gm>2)?gy+1:gy;
+  let days=365*gy+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)-80+gd+gdm[gm-1];
+  jy+=33*Math.floor(days/12053); days%=12053;
+  jy+=4*Math.floor(days/1461); days%=1461;
+  if(days>0){jy+=Math.floor((days-1)/365); days=(days-1)%365;}
+  const jm=days<186?1+Math.floor(days/31):7+Math.floor((days-186)/30);
+  const jd=1+(days<186?days%31:(days-186)%30);
+  return [jy,jm,jd];
+}
+function todayJ(){ const n=new Date(); return g2j(n.getFullYear(), n.getMonth()+1, n.getDate()); }
+function fmtJ(j){ return j ? `${faD(j[2])} ${J_MONTHS[j[1]-1]} ${faD(j[0])}` : "—"; }
+function fmtJShort(j){ return j ? `${faD(j[2])} ${J_MONTHS[j[1]-1]}` : "—"; }
+function fmtJFull(j){ return j ? `${faD(j[2])} ${J_MONTHS[j[1]-1]} ${faD(j[0])}` : "—"; }
+function dayNameFa(){ return J_DAYS[new Date().getDay()]; }
+function fmtTime(ts){ const d=new Date(ts); return `${faD(String(d.getHours()).padStart(2,"0"))}:${faD(String(d.getMinutes()).padStart(2,"0"))}`; }
+function fmtDateTime(ts){ const d=new Date(ts); const j=g2j(d.getFullYear(),d.getMonth()+1,d.getDate()); return fmtJ(j)+" — "+fmtTime(ts); }
+function timeAgo(ts){
+  const s=(Date.now()-ts)/1000;
+  if(s<60) return "همین حالا";
+  if(s<3600) return faD(Math.floor(s/60))+" دقیقه پیش";
+  if(s<86400) return faD(Math.floor(s/3600))+" ساعت پیش";
+  if(s<86400*30) return faD(Math.floor(s/86400))+" روز پیش";
+  return fmtDateTime(ts);
+}
+/* --- Crypto (SHA-256 via WebCrypto, PHP password_hash equivalent) --- */
+async function sha256(str){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+const hashPW = (pw, salt) => sha256(salt + "::fa::" + pw);
+
+/* ================= UI HELPERS ================= */
+const UI = {
+  icons(){ if(window.lucide) lucide.createIcons(); },
+  toast(msg, type="ok"){
+    const ic = type==="ok"?"check-circle-2":type==="err"?"alert-circle":"info";
+    const el = document.createElement("div");
+    el.className = "toast t-"+type;
+    el.innerHTML = `<i data-lucide="${ic}"></i><span>${esc(msg)}</span>`;
+    $("#toast-root").appendChild(el); UI.icons();
+    setTimeout(()=>{ el.classList.add("out"); setTimeout(()=>el.remove(), 380); }, 3400);
+  },
+  modal({title, icon="info", body="", actions=[], wide=false, onMount}){
+    const root = $("#modal-root");
+    root.innerHTML = `<div class="modal-bg"></div>
+      <div class="modal-box ${wide?"wide":""}">
+        <button class="icon-btn modal-x" data-close><i data-lucide="x"></i></button>
+        <h3><i data-lucide="${icon}" style="color:var(--orange)"></i>${esc(title)}</h3>
+        <div class="mt16">${body}</div>
+        ${actions.length?`<div class="flex mt24" style="justify-content:flex-end;flex-wrap:wrap">${actions.map((a,i)=>`<button class="btn ${a.cls||"btn-ghost"}" data-act="${i}">${a.icon?`<i data-lucide="${a.icon}"></i>`:""}${esc(a.label)}</button>`).join("")}</div>`:""}
+      </div>`;
+    root.classList.add("show"); UI.icons();
+    root.querySelector(".modal-bg").onclick = UI.closeModal;
+    root.querySelector("[data-close]").onclick = UI.closeModal;
+    actions.forEach((a,i)=>{ const b=root.querySelector(`[data-act="${i}"]`); if(b) b.onclick=()=>{ const r=a.onClick&&a.onClick(); if(r!==false && !a.keepOpen) UI.closeModal(); }; });
+    if(onMount) onMount(root.querySelector(".modal-box"));
+  },
+  closeModal(){ const r=$("#modal-root"); r.classList.remove("show"); r.innerHTML=""; },
+  confirm(msg, onYes, yesLabel="تأیید", danger=true){
+    UI.modal({
+      title:"تأیید عملیات", icon:"alert-triangle",
+      body:`<p class="muted">${esc(msg)}</p>`,
+      actions:[
+        {label:yesLabel, cls: danger?"btn-danger":"btn-success", icon:"check", onClick:()=>{ onYes(); }},
+        {label:"انصراف", cls:"btn-ghost"}
+      ]
+    });
+  },
+  promptFields(title, fields, onSave, icon="edit-3", saveLabel="ذخیره"){
+    const body = fields.map(f=>`
+      <div class="field">
+        <label>${esc(f.label)} ${f.req?"<b>*</b>":""}</label>
+        ${f.type==="select"
+          ? `<select class="input" id="pf_${f.key}">${f.options.map(o=>`<option value="${esc(o.v)}" ${String(o.v)===String(f.value)?"selected":""}>${esc(o.t)}</option>`).join("")}</select>`
+          : f.type==="textarea"
+          ? `<textarea class="input" id="pf_${f.key}" placeholder="${esc(f.ph||"")}">${esc(f.value||"")}</textarea>`
+          : `<input class="input ${f.cls||""}" id="pf_${f.key}" type="${f.type||"text"}" value="${esc(f.value??"")}" placeholder="${esc(f.ph||"")}" ${f.min!==undefined?`min="${f.min}"`:""} ${f.max!==undefined?`max="${f.max}"`:""} ${f.step?`step="${f.step}"`:""}>`}
+        ${f.hint?`<div class="hint">${esc(f.hint)}</div>`:""}
+      </div>`).join("");
+    UI.modal({title, icon, body, actions:[
+      {label:saveLabel, cls:"btn-primary", icon:"save", keepOpen:true, onClick:()=>{
+        const out={}; let ok=true;
+        fields.forEach(f=>{
+          const el=$("#pf_"+f.key); const v=el?el.value.trim():"";
+          if(f.req && !v){ el.classList.add("err"); ok=false; } else if(el){ el.classList.remove("err"); }
+          out[f.key]=v;
+        });
+        if(!ok){ UI.toast("فیلدهای الزامی را کامل کنید.","err"); return false; }
+        return onSave(out);
+      }},
+      {label:"انصراف", cls:"btn-ghost"}
+    ]});
+  }
+};
+
+/* --- Chart.js registry --- */
+const Charts = {
+  list:[],
+  make(ctx, cfg){ try{ const c=new Chart(ctx, cfg); Charts.list.push(c); return c; }catch(e){ return null; } },
+  destroyAll(){ Charts.list.forEach(c=>{try{c.destroy()}catch(e){}}); Charts.list=[]; }
+};
+function chartDefaults(){
+  if(!window.Chart) return;
+  Chart.defaults.font.family = "Vazirmatn";
+  Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#8EA0BF";
+  Chart.defaults.borderColor = "rgba(140,160,200,.12)";
+}
+
+/* --- Animated counters --- */
+function animateCounters(root){
+  (root||document).querySelectorAll("[data-count]").forEach(el=>{
+    const target=+el.dataset.count; const dur=1300; const t0=performance.now();
+    const fmt=v=>el.dataset.dec?faD(v.toFixed(1)):faD(Math.round(v));
+    const tick=t=>{ const p=Math.min(1,(t-t0)/dur); const e=1-Math.pow(1-p,3); el.textContent=fmt(target*e); if(p<1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  });
+}
+
+/* ================= DATABASE LAYER (localStorage = MySQL) ================= */
+const DB_KEY = "fa_db_v2";
+let db = null;
+const DB = {
+  load(){ try{ db = JSON.parse(localStorage.getItem(DB_KEY)); }catch(e){ db=null; } return db; },
+  save(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); },
+  wipe(){ localStorage.removeItem(DB_KEY); db=null; }
+};
+
+const STATUS = { approved:{t:"تأیید شده",c:"p-green"}, pending:{t:"در انتظار تأیید",c:"p-gold"}, rejected:{t:"رد شده",c:"p-red"}, blocked:{t:"مسدود شده",c:"p-gray"} };
+const MERIT_RULES = [
+  {v:-10, t:"غیبت غیرموجه", icon:"user-x"},
+  {v:-5,  t:"سه بار تأخیر در ورود", icon:"clock"},
+  {v:-2,  t:"بی‌نظمی", icon:"alert-triangle"}
+];
+
+/* ---- deterministic PRNG for stable seeds ---- */
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+async function seedDatabase(){
+  const rnd = mulberry32(14040817);
+  const pick = arr => arr[Math.floor(rnd()*arr.length)];
+
+  const classes = [
+    {id:"c71", name:"۷/۱", grade:7},
+    {id:"c81", name:"۸/۱", grade:8},
+    {id:"c82", name:"۸/۲", grade:8},
+    {id:"c91", name:"۹/۱", grade:9},
+    {id:"c92", name:"۹/۲", grade:9}
+  ];
+  const subjects = [
+    {id:"s_quran", name:"قرآن", icon:"book-open"},
+    {id:"s_dini", name:"تعلیمات دینی", icon:"moon-star"},
+    {id:"s_farsi", name:"ادبیات فارسی", icon:"pen-line"},
+    {id:"s_arabi", name:"عربی", icon:"languages"},
+    {id:"s_eng", name:"زبان انگلیسی", icon:"globe"},
+    {id:"s_math", name:"ریاضیات", icon:"sigma"},
+    {id:"s_sci", name:"علوم تجربی", icon:"flask-conical"},
+    {id:"s_social", name:"مطالعات اجتماعی", icon:"landmark"},
+    {id:"s_art", name:"هنر", icon:"palette"},
+    {id:"s_pe", name:"تربیت بدنی", icon:"dumbbell"},
+    {id:"s_tech", name:"کار و فناوری", icon:"cpu"},
+    {id:"s_think", name:"تفکر و سبک زندگی", icon:"brain"}
+  ];
+
+  const roster = [
+    ["آرمین","شکری","c71",.93],["پرهام","کاظمی","c71",.81],["تارا","مرادی","c71",.88],
+    ["آرمان","رستمی","c81",.95],["نیلوفر","احمدی","c81",.79],["کیان","محمدی","c81",.86],
+    ["سارا","حیدری","c82",.9],["دانیال","صالحی","c82",.72],["یاسمین","قاسمی","c82",.85],
+    ["امیرعلی","نجفی","c91",.97],["رها","کریمی","c91",.83],["مانی","فرهادی","c91",.76],
+    ["باران","موسوی","c92",.91],["سام","ابراهیمی","c92",.8],["ترانه","رضایی","c92",.87]
+  ];
+  const pendingRoster = [["نیما","توکلی","c71"],["هلیا","اکبری","c91"],["پارسا","شریفی","c82"]];
+
+  const users=[], students=[], grades=[], merits=[], logs=[];
+  const adminSalt = "fa_admin_core";
+  users.push({ id:"u_admin", role:"admin", username:"admin", salt:adminSalt, hash: await hashPW("admin1234", adminSalt), mustChange:true, createdAt: Date.now()-86400000*40 });
+
+  let stuNo = 402100;
+  const mkStudent = async (fn, ln, cid, status, withUser, pw) => {
+    const sid = "st_"+uid()+Math.floor(rnd()*99);
+    const stId = String(stuNo++);
+    let userId = null;
+    if(withUser){
+      const uname = fn==="آرمان" ? "student" : "stu_"+stId;
+      const salt = uid();
+      userId = "u_"+uid();
+      users.push({id:userId, role:"student", username:uname, salt, hash: await hashPW(pw||("std"+stId), salt), mustChange:false, createdAt: Date.now()-rnd()*86400000*30});
+    }
+    students.push({ id:sid, userId, firstName:fn, lastName:ln, studentId:stId, classId:cid, status, createdAt: Date.now()-rnd()*86400000*25 });
+    return sid;
+  };
+
+  const approvedIds=[];
+  for(const [fn,ln,cid,ab] of roster){
+    const sid = await mkStudent(fn,ln,cid,"approved", fn==="آرمان", fn==="آرمان"?"12345678":null);
+    approvedIds.push({sid, ab, cid});
+  }
+  for(const [fn,ln,cid] of pendingRoster) await mkStudent(fn,ln,cid,"pending",true);
+  await mkStudent("یکتا","رفیعی","c71","blocked",true);
+
+  /* grades: term1 full, term2 partial */
+  const jNow = todayJ();
+  for(const {sid, ab} of approvedIds){
+    for(const sub of subjects){
+      const base = 12 + ab*8;
+      const mk = (term,type,mOff) => {
+        const v = clamp(Math.round((base + (rnd()*4-2))*4)/4, 10, 20);
+        const jm = clamp((term===1? 7+mOff : 11+mOff), 1, 12);
+        grades.push({ id:"g_"+uid()+Math.floor(rnd()*999), studentId:sid, subjectId:sub.id, value:v, term, type, jdate:[jNow[0], jm, Math.floor(rnd()*27)+1], note:"", status:"approved", updatedAt:Date.now()-rnd()*86400000*20, updatedBy:"مدیر سامانه" });
+      };
+      mk(1,"مستمر",0); mk(1,"پایانی",1);
+      if(rnd()>.35){ mk(2,"مستمر",0); mk(2,"پایانی",1); }
+    }
+  }
+
+  /* merits */
+  for(const {sid} of approvedIds){
+    const n = Math.floor(rnd()*4);
+    for(let i=0;i<n;i++){
+      const r = pick([...MERIT_RULES, {v:+8,t:"همکاری در برگزاری مراسم"},{v:+5,t:"فعالیت در قرارگاه"},{v:+3,t:"نمونه انضباط هفتگی"}]);
+      merits.push({ id:"m_"+uid()+Math.floor(rnd()*999), studentId:sid, delta:r.v, reason:r.t, admin:"مدیر سامانه", at: Date.now()-rnd()*86400000*35 });
+    }
+  }
+
+  const exams = [
+    {id:"e_mobtakaran", title:"امتحان مبتکران", subjectId:null, classId:"all", jmonth:8, jday:20, jyear:null, desc:"آزمون استعدادیابی و ورودی مبتکران — ویژه داوطلبان جدید مدرسه فاتحان آینده. محل برگزاری: سالن اجتماعات مدرسه.", createdAt:Date.now()-86400000*12},
+    {id:"e1", title:"میان‌ترم ریاضیات", subjectId:"s_math", classId:"c81", jmonth:8, jday:15, jyear:null, desc:"فصل‌های ۱ تا ۳ کتاب ریاضی پایه هشتم", createdAt:Date.now()-86400000*9},
+    {id:"e2", title:"آزمون علوم تجربی", subjectId:"s_sci", classId:"c92", jmonth:8, jday:22, jyear:null, desc:"فصل‌های ۱ و ۲ — همراه با پرسش‌های عملی آزمایشگاه", createdAt:Date.now()-86400000*8},
+    {id:"e3", title:"امتحان ادبیات فارسی", subjectId:"s_farsi", classId:"c71", jmonth:8, jday:29, jyear:null, desc:"درس‌های ۱ تا ۵ + لحن و قواعد", createdAt:Date.now()-86400000*6},
+    {id:"e4", title:"آزمون زبان انگلیسی", subjectId:"s_eng", classId:"c91", jmonth:9, jday:6, jyear:null, desc:"Lessons 1-3 + گرامر و درک مطلب", createdAt:Date.now()-86400000*4},
+    {id:"e5", title:"آزمون عربی", subjectId:"s_arabi", classId:"c82", jmonth:7, jday:24, jyear:null, desc:"قواعد درس‌های ۱ تا ۴ (برگزار شد)", createdAt:Date.now()-86400000*20}
+  ];
+
+  const announcements = [
+    {id:"a1", title:"آغاز سال تحصیلی جدید در فاتحان آینده", body:"بدوی به تمامی دانش‌آموزان عزیز و خانواده‌های گرامی، سال تحصیلی پرمیمنتبخش جدید را تبریک می‌گوییم. کلاس‌ها از شنبه اول مهر ساعت ۷:۳۰ صبح آغاز می‌شوند. حضور منظم، همراه‌داشتن لوازم‌التجهیز و رعایت شئونات اسلامی الزامی است.", category:"عمومی", published:true, createdAt:Date.now()-86400000*38},
+    {id:"a2", title:"برنامه آزمون‌های آبان‌ماه اعلام شد", body:"برنامه آزمون‌های میان‌ترم آبان‌ماه در بخش «امتحانات» سامانه و اعلام‌نامه کلاس‌ها منتشر شد. دانش‌آموزان موظف‌اند از یک هفته قبل، برنامه مطالعاتی خود را با مشاور پایه هماهنگ کنند. امتحان مبتکران در تاریخ ۲۰ آبان برگزار می‌شود.", category:"امتحانات", published:true, createdAt:Date.now()-86400000*7},
+    {id:"a3", title:"افتخارآفرینی در المپیاد علمی کشوری", body:"دانش‌آموزان مدرسه فاتحان آینده موفق به کسب مدال طلای المپیاد ریاضی و رتبه‌های برتر المپیاد علوم شدند. این افتخار را به جامعه مدرسه و خانواده‌های بزرگوار تبریک عرض می‌نماییم.", category:"افتخارات", published:true, createdAt:Date.now()-86400000*4},
+    {id:"a4", title:"فراخوان عضویت در قرارگاه‌های مدرسه", body:"ثبت‌نام عضویت در پنج قرارگاه فرهنگی، مدیا، نظم، دانایی و انرژی از طریق معاونت پرورشی آغاز شد. دانش‌آموزان علاقه‌مند می‌توانند تا پایان آبان‌ماه نام‌نویسی کنند.", category:"پرورشی", published:true, createdAt:Date.now()-86400000*2}
+  ];
+
+  const sTop = approvedIds.slice().sort((a,b)=>b.ab-a.ab);
+  const achievements = [
+    {id:"ac1", studentId:sTop[0].sid, title:"مدال طلای المپیاد ریاضی کشوری", type:"علمی", medal:"gold", desc:"کسب رتبه اول کشوری در مرحله دوم المپیاد ریاضی", jdate:[jNow[0],4,12]},
+    {id:"ac2", studentId:sTop[1].sid, title:"مدال نقره مسابقات قرآن سراسری", type:"فرهنگی", medal:"silver", desc:"رشته حفظ جزء ۳۰ — مرحله استانی و کشوری", jdate:[jNow[0],2,25]},
+    {id:"ac3", studentId:sTop[2].sid, title:"دانش‌آموز نمونه انضباط", type:"انضباطی", medal:"bronze", desc:"بیشترین امتیاز جنم و منضبط‌ترین دانش‌آموز نیمسال اول", jdate:[jNow[0],6,3]},
+    {id:"ac4", studentId:sTop[3].sid, title:"قهرمان مسابقات رباتیک استان", type:"علمی", medal:"gold", desc:"تیم رباتیک فاتحان — رتبه اول مسابقات دانش‌آموزی", jdate:[jNow[0],5,18]}
+  ];
+
+  const bases = [
+    {id:"b_farhangi", slug:"farhangi", name:"قرارگاه فرهنگی", icon:"sparkles", color:"#F5B400", manager:"خانم زهرا موسوی", desc:"مسئول برگزاری مراسم‌ها، جشن‌ها، نمایشگاه‌های کتاب و فعالیت‌های هنری مدرسه. هدف ما پرورش روحیه نشاط، هویت و خلاقیت در دانش‌آموزان است.", members:["ارکیده صمدی","آرمان رستمی","باران موسوی"], activities:["مراسم جشن فاتحان آبان‌ماه","نمایشگاه کتاب و فرهنگ مطالعه","مسابقه خوش‌نویسی و نقاشی"], report:"در نیمسال گذشته ۱۲ برنامه فرهنگی با مشارکت ۷۴٪ دانش‌آموزان اجرا شد و رضایت خانواده‌ها ۹۲٪ گزارش شده است."},
+    {id:"b_media", slug:"media", name:"قرارگاه مدیا", icon:"clapperboard", color:"#8B6FD8", manager:"آقای مهدی رحمانی", desc:"تولید محتوای دیجیتال مدرسه: عکاسی و فیلم‌برداری مراسم، پادکست دانش‌آموزی، پویانمایی و مدیریت رسانه‌های رسمی فاتحان آینده.", members:["کیان محمدی","سام ابراهیمی","ترانه رضایی"], activities:["پادکست «صدای فاتحان» — قسمت ۸","تیزر ثبت‌نام امتحان مبتکران","آرشیو دیجیتال مراسم‌ها"], report:"مجموع تولیدات رسانه‌ای نیمسال گذشته: ۲۶ ویدیو، ۹ پادکست و بیش از ۴۰ هزار بازدید در رسانه‌های رسمی مدرسه."},
+    {id:"b_nezam", slug:"nezam", name:"قرارگاه نظم", icon:"shield-check", color:"#2FBF8A", manager:"آقای حسین کاظمی", desc:"نظارت بر انضباط صبحگاهی، ورود و خروج منظم، هماهنگی نگهبانان دانش‌آموزی و اجرای دقیق قوانین جنم.", members:["دانیال صالحی","مانی فرهادی","پرهام کاظمی"], activities:["طرح صف منظم صبحگاهی","هفته انضباط و پوشش","گزارش هفتگی تأخیرها"], report:"میانگین تأخیر ورودی نسبت به پارسال ۳۸٪ کاهش یافته و رضایت معلمان از نظم کلاس‌ها ۸۹٪ است."},
+    {id:"b_danayi", slug:"danayi", name:"قرارگاه دانایی", icon:"graduation-cap", color:"#3B6BD4", manager:"خانم مریم تهرانی", desc:"پشتیبانی آموزشی دانش‌آموزان: کلاس‌های تقویتی همتراز، کتابخانه مسابقه‌ای، نخبگان و آمادگی برای المپیادها و امتحان مبتکران.", members:["امیرعلی نجفی","سارا حیدری","آرمین شکری"], activities:["کارگاه تست‌زنی مبتکران","کلاس تقویتی ریاضی نهم","مسابقه مطالعه ماهانه"], report:"میانگین معدل شرکت‌کنندگان در برنامه‌های دانایی ۰٫۸ نمره رشد داشته و ۴ دانش‌آموز به مرحله نهایی المپیاد راه یافتند."},
+    {id:"b_energy", slug:"energy", name:"قرارگاه انرژی", icon:"zap", color:"#F08A5D", manager:"آقای رضا جلالی", desc:"ورزش، نشاط و سلامت: مسابقات ورزشی بین کلاسی، صبح‌گاهی ورزشی، کمپین تغذیه سالم و بازی‌های گروهی زنگ تفریح.", members:["نیلوفر احمدی","یاسمین قاسمی","رها کریمی"], activities:["لیگ فوتسال بین کلاسی","طرح صبحگاه نشاط","جشنواره بازی‌های بومی"], report:"مشارکت ورزشی دانش‌آموزان از ۴۶٪ به ۷۱٪ رسید و تیم فوتسال مدرسه قهرمان منطقه شد."}
+  ];
+
+  db = {
+    version: 2,
+    installedAt: Date.now(),
+    settings: { schoolName:"مدرسه فاتحان آینده", slogan:"جایی که فردا ساخته می‌شود", year:String(jNow[0]) },
+    attempts:{},
+    users, students, classes, subjects, grades, exams, announcements, achievements, merits, bases,
+    logs:[
+      {id:"l1", actor:"مدیر سامانه", action:"نصب اولیه سامانه", detail:"ساخت جدول‌ها، حساب مدیر و داده‌های پایه", at:Date.now()-86400000*40},
+      {id:"l2", actor:"مدیر سامانه", action:"ثبت نمرات نیمسال اول", detail:"ثبت دسته‌ای نمرات پایه‌های هفتم تا نهم", at:Date.now()-86400000*21},
+      {id:"l3", actor:"مدیر سامانه", action:"انتشار اطلاعیه", detail:"«برنامه آزمون‌های آبان‌ماه اعلام شد»", at:Date.now()-86400000*7}
+    ]
+  };
+  DB.save();
+}
+
+/* ================= QUERY & CALC HELPERS ================= */
+const clsName = id => { const c=(db.classes||[]).find(x=>x.id===id); return c?c.name:"—"; };
+const subName = id => { const s=(db.subjects||[]).find(x=>x.id===id); return s?s.name:"—"; };
+const subIcon = id => { const s=(db.subjects||[]).find(x=>x.id===id); return s?s.icon:"book"; };
+const stuFull = s => s ? `${s.firstName} ${s.lastName}` : "—";
+const stuById = id => db.students.find(s=>s.id===id);
+const approvedStudents = () => db.students.filter(s=>s.status==="approved");
+const classStudents = cid => db.students.filter(s=>s.classId===cid);
+const meritBalance = sid => db.merits.filter(m=>m.studentId===sid).reduce((a,m)=>a+m.delta,0);
+function gpaOf(sid, term){
+  const gs = db.grades.filter(g=>g.studentId===sid && g.status==="approved" && (!term || g.term===+term));
+  if(!gs.length) return null;
+  return ROUND2(gs.reduce((a,g)=>a+g.value,0)/gs.length);
+}
+function subjectAvg(sid, subId, term){
+  const gs = db.grades.filter(g=>g.studentId===sid && g.subjectId===subId && g.status==="approved" && (!term||g.term===+term));
+  if(!gs.length) return null;
+  return ROUND2(gs.reduce((a,g)=>a+g.value,0)/gs.length);
+}
+function schoolRanking(){
+  return approvedStudents().map(s=>({s, gpa:gpaOf(s.id)})).filter(x=>x.gpa!==null).sort((a,b)=>b.gpa-a.gpa);
+}
+function classRanking(cid){
+  return classStudents(cid).filter(s=>s.status==="approved").map(s=>({s, gpa:gpaOf(s.id)})).filter(x=>x.gpa!==null).sort((a,b)=>b.gpa-a.gpa);
+}
+function rankInSchool(sid){ const r=schoolRanking(); const i=r.findIndex(x=>x.s.id===sid); return i<0?null:{rank:i+1,total:r.length}; }
+function rankInClass(sid){ const s=stuById(sid); if(!s) return null; const r=classRanking(s.classId); const i=r.findIndex(x=>x.s.id===sid); return i<0?null:{rank:i+1,total:r.length}; }
+function meritRanking(){ return approvedStudents().map(s=>({s, bal:meritBalance(s.id)})).sort((a,b)=>b.bal-a.bal); }
+function gpaClassAvg(cid){ const r=classRanking(cid); return r.length? ROUND2(r.reduce((a,x)=>a+x.gpa,0)/r.length) : null; }
+function examStatus(ex){
+  const j=todayJ(); const cur=j[1]*100+j[2]; const tgt=ex.jmonth*100+ex.jday;
+  return tgt>=cur ? {state:"up", days:tgt-cur} : {state:"past", days:cur-tgt};
+}
+function logActivity(actor, action, detail){
+  db.logs.unshift({id:"l_"+uid(), actor, action, detail, at:Date.now()});
+  if(db.logs.length>300) db.logs.length=300;
+}
+const gradeColorCls = v => v>=17?"sc-hi":v>=12?"sc-mid":"sc-lo";
+
+/* ================= AUTH & SESSION ================= */
+const Auth = {
+  sess(){ try{ return JSON.parse(sessionStorage.getItem("fa_sess")); }catch(e){ return null; } },
+  setSess(s){ sessionStorage.setItem("fa_sess", JSON.stringify(s)); },
+  clear(){ sessionStorage.removeItem("fa_sess"); },
+  me(){
+    const s=Auth.sess(); if(!s||!db) return null;
+    const u=db.users.find(x=>x.id===s.uid); if(!u) return null;
+    let st=null;
+    if(u.role==="student") st = db.students.find(x=>x.userId===u.id) || null;
+    return {u, st};
+  },
+  async login(username, pw){
+    username=(username||"").trim();
+    const key="lock:"+username;
+    const att=db.attempts[key]||{n:0,until:0};
+    if(att.until && att.until>Date.now()){
+      const sec=Math.ceil((att.until-Date.now())/1000);
+      return {ok:false, err:`به دلیل تلاش‌های ناموفق، ورود تا ${faD(sec)} ثانیه دیگر قفل است.`};
+    }
+    const u=db.users.find(x=>x.username===username);
+    const fake="x".repeat(64);
+    const h=await hashPW(pw, u?u.salt:"fake_salt");
+    if(!u || h!==u.hash){
+      att.n=(att.n||0)+1;
+      if(att.n>=5){ att.until=Date.now()+120000; att.n=0; UI.toast("۵ تلاش ناموفق — حساب به مدت ۲ دقیقه قفل شد.","err"); }
+      db.attempts[key]=att; DB.save();
+      return {ok:false, err:"نام کاربری یا رمز عبور اشتباه است."};
+    }
+    db.attempts[key]={n:0,until:0};
+    if(u.role==="student"){
+      const st=db.students.find(x=>x.userId===u.id);
+      if(!st) return {ok:false,err:"پرونده دانش‌آموزی یافت نشد."};
+      if(st.status==="pending") return {ok:false,err:"حساب شما هنوز در انتظار تأیید مدیر مدرسه است."};
+      if(st.status==="rejected") return {ok:false,err:"متأسفانه ثبت‌نام شما توسط مدیر رد شده است."};
+      if(st.status==="blocked") return {ok:false,err:"حساب شما مسدود شده است. با مدیریت مدرسه تماس بگیرید."};
+    }
+    DB.save();
+    Auth.setSess({uid:u.id, role:u.role, t:Date.now()});
+    logActivity(u.role==="admin"?"مدیر":"دانش‌آموز", "ورود به سامانه", `ورود موفق «${u.username}»`);
+    DB.save();
+    return {ok:true, user:u};
+  },
+  logout(){
+    const me=Auth.me();
+    if(me) logActivity(me.u.role==="admin"?"مدیر":"دانش‌آموز","خروج از سامانه",`خروج «${me.u.username}»`);
+    DB.save(); Auth.clear(); go("home");
+    UI.toast("با موفقیت خارج شدید.","info");
+  }
+};
+
+/* ================= THEME ================= */
+function applyTheme(){ document.documentElement.setAttribute("data-theme", localStorage.getItem("fa_theme")||"dark"); chartDefaults(); }
+function toggleTheme(){ localStorage.setItem("fa_theme", (localStorage.getItem("fa_theme")||"dark")==="dark"?"light":"dark"); applyTheme(); render(); }
+
+/* ================= ROUTER ================= */
+function go(p){ const t="#/"+p; if(location.hash===t) render(); else location.hash=t; }
+function parseHash(){ const h=location.hash.replace(/^#\/?/,""); const i=h.indexOf("/"); return i<0?{v:h||"home",p:null}:{v:h.slice(0,i)||"home",p:h.slice(i+1)||null}; }
+function render(){
+  if(!db) return;
+  Charts.destroyAll();
+  const {v,p}=parseHash();
+  const me=Auth.me();
+  if(v==="admin" && (!me||me.u.role!=="admin")) return go("login/admin");
+  if(v==="student" && (!me||me.u.role!=="student")) return go("login/student");
+  if(me && me.u.mustChange && v!=="change") return go("change");
+  if(!me && v==="change") return go("home");
+  const map={home:HomeView, sec:HomeView, login:LoginView, register:RegisterView, base:BaseView, guide:GuideView, install:InstallView, change:ForceChangeView, student:StudentView, admin:AdminView};
+  const fn=map[v]||HomeView;
+  $("#app").innerHTML = fn.html(p, v);
+  window.scrollTo({top:0});
+  UI.icons();
+  if(fn.mount) fn.mount(p, v);
+  if(v==="sec" && p){ const el=document.getElementById(p); if(el) setTimeout(()=>el.scrollIntoView({behavior:"smooth"}),80); }
+}
+window.addEventListener("hashchange", render);
+
+/* ================= SHARED PARTS ================= */
+let __eid=0;
+function emblemSVG(sz=42){
+  const id="gem"+(++__eid);
+  return `<svg class="emblem" width="${sz}" height="${sz}" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6BD4"/><stop offset="1" stop-color="#F08A5D"/></linearGradient></defs><path d="M32 3 56 12v18c0 15-10 26-24 31C18 56 8 45 8 30V12z" fill="url(#${id})"/><path d="M32 14l4 9 10 1-7.5 6.5L41 41l-9-5.5L23 41l2.5-10.5L18 24l10-1z" fill="#050A14"/></svg>`;
+}
+function navHTML(){
+  const me=Auth.me();
+  const theme=localStorage.getItem("fa_theme")||"dark";
+  return `<header class="nav"><div class="nav-in">
+    <a class="brand" href="#/home">${emblemSVG(42)}<span><b>فاتحان آینده</b><span>سامانه جامع مدیریت مدرسه</span></span></a>
+    <nav class="nav-links">
+      <a href="#/sec/top" data-nav="top">خانه</a>
+      <a href="#/sec/news">اطلاعیه‌ها</a>
+      <a href="#/sec/exams">امتحانات</a>
+      <a href="#/sec/bases">قرارگاه‌ها</a>
+      <a href="#/sec/honors">افتخارات</a>
+      <a href="#/guide">راهنمای نصب</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="icon-btn" onclick="toggleTheme()" title="تغییر پوسته"><i data-lucide="${theme==="dark"?"sun":"moon"}"></i></button>
+      ${me
+        ? `<button class="btn btn-primary btn-sm" onclick="go('${me.u.role==="admin"?"admin/dash":"student/dash"}')"><i data-lucide="layout-dashboard"></i>ورود به پنل</button>
+           <button class="icon-btn" onclick="Auth.logout()" title="خروج"><i data-lucide="log-out"></i></button>`
+        : `<button class="btn btn-ghost btn-sm" onclick="go('login/student')"><i data-lucide="graduation-cap"></i><span class="hide-m">ورود دانش‌آموز</span></button>
+           <button class="btn btn-primary btn-sm" onclick="go('login/admin')"><i data-lucide="shield"></i><span class="hide-m">ورود مدیر</span></button>`}
+    </div>
+  </div></header>
+  <style>@media(max-width:520px){.hide-m{display:none}}</style>`;
+}
+function footerHTML(){
+  return `<footer class="footer"><div class="wrap between">
+    <div class="flex"><span>${emblemSVG(38)}</span><div><b>${esc(db.settings.schoolName)}</b><div class="tiny muted">${esc(db.settings.slogan)} — سال تحصیلی ${faD(db.settings.year)}</div></div></div>
+    <div class="flex small">
+      <a href="#/guide" class="chip"><i data-lucide="book-open-check"></i>راهنمای نصب</a>
+      <a href="#/install" class="chip"><i data-lucide="wrench"></i>نصب‌ساز نمایشی</a>
+      <span class="chip"><i data-lucide="git-branch"></i>نسخه ۲٫۰ — نمایشی GitHub Pages</span>
+    </div>
+  </div></footer>`;
+}
+
+/* ================= HOME VIEW ================= */
+const HomeView = {
+html(){
+  const news=db.announcements.filter(a=>a.published).sort((a,b)=>b.createdAt-a.createdAt).slice(0,3);
+  const exams=db.exams.map(e=>({e,st:examStatus(e)})).filter(x=>x.st.state==="up").sort((a,b)=>a.st.days-b.st.days).slice(0,5);
+  const ranks=schoolRanking().slice(0,5);
+  const mRank=meritRanking().slice(0,5);
+  const j=todayJ();
+  const avgAll=ROUND2(ranks.length? schoolRanking().reduce((a,x)=>a+x.gpa,0)/schoolRanking().length : 0);
+  const medalIcon={gold:"m1",silver:"m2",bronze:"m3"};
+  const mq=[...db.announcements.filter(a=>a.published).map(a=>a.title), ...db.exams.map(e=>`امتحان ${e.title} — ${faD(e.jday)} ${J_MONTHS[e.jmonth-1]}`)];
+  const mqHTML=mq.concat(mq).map(t=>`<span><i data-lucide="megaphone"></i>${esc(t)}</span>`).join("");
+  return `
+  ${navHTML()}
+  <div id="top"></div>
+  <main>
+    <section class="hero"><div class="wrap hero-grid">
+      <div class="reveal">
+        <div class="date-row">
+          <span class="chip"><i data-lucide="calendar-days"></i>امروز ${dayNameFa()}، ${fmtJFull(j)}</span>
+          <span class="chip" style="color:var(--gold)"><i data-lucide="sun-medium"></i>به فاتحان آینده خوش آمدید</span>
+        </div>
+        <h1 class="h-xl">سامانه هوشمند مدیریت<br>مدرسه <span class="grad-text">فاتحان آینده</span></h1>
+        <p class="lead">نمرات، کارنامه، امتحانات، جنم، قرارگاه‌ها و اطلاعیه‌ها — همه در یک سامانه یکپارچه، سریع و امن. دانش‌آموزان با حساب شخصی خود وارد شوند؛ مدیر مدرسه همه‌چیز را مدیریت کند.</p>
+        <div class="hero-actions">
+          <button class="btn btn-accent" onclick="go('login/student')"><i data-lucide="graduation-cap"></i>ورود دانش‌آموز</button>
+          <button class="btn btn-primary" onclick="go('register')"><i data-lucide="user-plus"></i>ثبت‌نام دانش‌آموز جدید</button>
+          <button class="btn btn-ghost" onclick="go('login/admin')"><i data-lucide="shield"></i>ورود مدیر</button>
+        </div>
+        <div class="grid g4 mt32">
+          <div class="card kpi"><div class="ic ic-blue"><i data-lucide="users"></i></div><div class="num" data-count="${approvedStudents().length}">۰</div><div class="lbl">دانش‌آموز فعال</div></div>
+          <div class="card kpi"><div class="ic ic-orange"><i data-lucide="school"></i></div><div class="num" data-count="${db.classes.length}">۰</div><div class="lbl">کلاس درس</div></div>
+          <div class="card kpi"><div class="ic ic-gold"><i data-lucide="book-marked"></i></div><div class="num" data-count="${db.subjects.length}">۰</div><div class="lbl">درس رسمی</div></div>
+          <div class="card kpi"><div class="ic ic-green"><i data-lucide="trophy"></i></div><div class="num" data-count="${db.achievements.length+db.bases.length}">۰</div><div class="lbl">افتخار و قرارگاه</div></div>
+        </div>
+      </div>
+      <div class="hero-card card card-p reveal float" style="animation-delay:.15s">
+        <div class="between mb-1"><div><div class="muted small">میانگین معدل کل مدرسه</div><div class="h-lg grad-text">${faD(avgAll)}</div></div>
+          <div class="ring-wrap"><svg width="150" height="150"><circle cx="75" cy="75" r="62" fill="none" stroke="var(--border)" stroke-width="11"/><circle cx="75" cy="75" r="62" fill="none" stroke="url(#ringg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="${(avgAll/20)*389} 389"/><defs><linearGradient id="ringg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6BD4"/><stop offset="1" stop-color="#F08A5D"/></linearGradient></defs></svg>
+          <div class="ring-c"><b style="font-size:22px">${faD(Math.round(avgAll/20*100))}٪</b><span class="tiny muted">از ۲۰</span></div></div>
+        </div>
+        <div class="hr"></div>
+        <div class="grid" style="gap:10px">
+          <div class="mini-row"><div class="mini-ic ic-gold"><i data-lucide="crown"></i></div><div><b>${ranks[0]?esc(stuFull(ranks[0].s)):"—"}</b><div class="tiny muted">رتبه اول مدرسه با معدل ${ranks[0]?faD(ranks[0].gpa):"—"}</div></div></div>
+          <div class="mini-row"><div class="mini-ic ic-blue"><i data-lucide="file-check-2"></i></div><div><b>${faD(exams.length)} امتحان پیش‌رو</b><div class="tiny muted">${exams[0]?esc(exams[0].e.title)+" — "+faD(exams[0].e.jday)+" "+J_MONTHS[exams[0].e.jmonth-1]:"برنامه‌ای ثبت نشده"}</div></div></div>
+          <div class="mini-row"><div class="mini-ic ic-orange"><i data-lucide="zap"></i></div><div><b>${faD(db.students.filter(s=>s.status==="pending").length)} ثبت‌نام در انتظار تأیید</b><div class="tiny muted">مدیر پس از بررسی، حساب‌ها را فعال می‌کند</div></div></div>
+        </div>
+      </div>
+    </div></section>
+
+    <div class="marquee"><div class="marquee-in">${mqHTML}</div></div>
+
+    <section class="sec" id="news"><div class="wrap">
+      <div class="sec-head reveal"><div><h2 class="h-lg">آخرین اطلاعیه‌ها</h2><div class="sub">اطلاع‌رسانی رسمی مدیریت مدرسه برای دانش‌آموزان و خانواده‌ها</div></div>
+      <span class="chip"><i data-lucide="bell-ring"></i>${faD(news.length)} اطلاعیه جدید</span></div>
+      <div class="grid g3">
+        ${news.map((a,i)=>{ const cats={"عمومی":["ic-blue","megaphone"],"امتحانات":["ic-red","file-pen"],"افتخارات":["ic-gold","trophy"],"پرورشی":["ic-green","heart-handshake"]}; const c=cats[a.category]||cats["عمومی"];
+          return `<article class="card news-card reveal" style="animation-delay:${i*.08}s">
+            <div class="news-img ${c[0]}" style="background:linear-gradient(135deg,rgba(59,107,212,.18),rgba(240,138,93,.12))"><i data-lucide="${c[1]}"></i></div>
+            <div class="card-p" style="flex:1;display:flex;flex-direction:column">
+              <div class="between"><span class="chip">${esc(a.category)}</span><span class="tiny muted">${timeAgo(a.createdAt)}</span></div>
+              <h3 class="h-md mt8" style="font-size:16px">${esc(a.title)}</h3>
+              <p class="muted small mt8" style="flex:1">${esc(a.body.slice(0,110))}…</p>
+              <button class="btn btn-ghost btn-sm mt16" onclick="showAnnouncement('${a.id}')"><i data-lucide="eye"></i>مشاهده کامل</button>
+            </div></article>`; }).join("")}
+      </div>
+    </div></section>
+
+    <section class="sec" id="exams" style="padding-top:20px"><div class="wrap">
+      <div class="sec-head reveal"><div><h2 class="h-lg">برنامه امتحانات</h2><div class="sub">امتحانات پیش‌روی مدرسه — شامل امتحان مبتکران ۲۰ آبان</div></div>
+      <span class="chip count-chip"><i data-lucide="alarm-clock"></i>شمارش معکوس فعال</span></div>
+      <div class="grid" style="gap:12px">
+        ${exams.map(({e,st},i)=>`<div class="exam-row reveal" style="animation-delay:${i*.06}s">
+          <div class="exam-date"><b>${faD(e.jday)}</b><span>${J_MONTHS[e.jmonth-1]}</span></div>
+          <div style="flex:1;min-width:0"><b>${esc(e.title)}</b><div class="tiny muted">${e.subjectId?esc(subName(e.subjectId))+" — ":""}${e.classId==="all"?"همه پایه‌ها":"کلاس "+clsName(e.classId)}</div></div>
+          <div class="flex">
+            <span class="chip ${st.days<=7?"count-chip":""}"><i data-lucide="hourglass"></i>${st.days===0?"امروز!":faD(st.days)+" روز مانده"}</span>
+            <button class="btn btn-ghost btn-sm" onclick="showExam('${e.id}')"><i data-lucide="info"></i>جزئیات</button>
+          </div></div>`).join("") || `<div class="empty card"><i data-lucide="calendar-x"></i>امتحان آینده‌ای ثبت نشده است.</div>`}
+      </div>
+    </div></section>
+
+    <section class="sec" id="bases" style="padding-top:20px"><div class="wrap">
+      <div class="sec-head reveal"><div><h2 class="h-lg">قرارگاه‌های مدرسه</h2><div class="sub">پنج قرارگاه تخصصی دانش‌آموزی — موتور محرک فعالیت‌های فاتحان آینده</div></div></div>
+      <div class="grid g3">
+        ${db.bases.map((b,i)=>`<div class="card base-card reveal" style="--bc:${b.color}44;--bcl:${b.color};animation-delay:${i*.07}s" onclick="go('base/${b.slug}')">
+          <div class="between"><div class="base-ic"><i data-lucide="${b.icon}"></i></div><i data-lucide="arrow-left" class="muted"></i></div>
+          <h3 class="h-md mt16">${esc(b.name)}</h3>
+          <p class="muted small mt8">${esc(b.desc.slice(0,90))}…</p>
+          <div class="flex mt16 tiny muted"><i data-lucide="user-cog" style="width:14px;height:14px"></i>مسئول: ${esc(b.manager)}</div>
+        </div>`).join("")}
+      </div>
+    </div></section>
+
+    <section class="sec" id="honors" style="padding-top:20px"><div class="wrap">
+      <div class="sec-head reveal"><div><h2 class="h-lg">رتبه‌بندی و افتخارات</h2><div class="sub">بر اساس داده‌های واقعی نمرات و جنم — به‌روزرسانی خودکار</div></div>
+      <span class="chip" style="color:var(--gold)"><i data-lucide="medal"></i>مدال‌های طلا، نقره و برنز</span></div>
+      <div class="grid g2">
+        <div class="card card-p reveal">
+          <div class="between mb-1"><h3 class="h-md flex"><i data-lucide="line-chart" style="color:var(--blue-xl)"></i>برترین‌های معدل مدرسه</h3><span class="tiny muted">نیمسال جاری</span></div>
+          <div class="grid mt16" style="gap:10px">
+            ${ranks.map((r,i)=>`<div class="rank-row ${i===0?"top":""}">
+              ${i<3?`<span class="medal ${"m"+(i+1)}">${faD(i+1)}</span>`:`<span class="medal" style="background:var(--card3);color:var(--muted);box-shadow:none">${faD(i+1)}</span>`}
+              <span class="avatar">${esc(r.s.firstName[0])}</span>
+              <div style="flex:1"><b>${esc(stuFull(r.s))}</b><div class="tiny muted">کلاس ${clsName(r.s.classId)} — شماره ${faD(r.s.studentId)}</div></div>
+              <span class="score-badge ${gradeColorCls(r.gpa)}">${faD(r.gpa)}</span>
+            </div>`).join("")}
+          </div>
+        </div>
+        <div class="card card-p reveal" style="animation-delay:.1s">
+          <div class="between mb-1"><h3 class="h-md flex"><i data-lucide="zap" style="color:var(--orange)"></i>برترین‌های جنم</h3><span class="tiny muted">امتیاز انضباط و مشارکت</span></div>
+          <div class="grid mt16" style="gap:10px">
+            ${mRank.map((r,i)=>`<div class="rank-row">
+              <span class="score-badge ${r.bal>=0?"sc-hi":"sc-lo"}" style="min-width:52px">${faD(r.bal>0?"+"+r.bal:r.bal)}</span>
+              <span class="avatar" style="background:linear-gradient(135deg,#F08A5D,#F5B400)">${esc(r.s.firstName[0])}</span>
+              <div style="flex:1"><b>${esc(stuFull(r.s))}</b><div class="tiny muted">کلاس ${clsName(r.s.classId)}</div></div>
+              ${i===0?`<i data-lucide="crown" style="color:var(--gold)"></i>`:""}
+            </div>`).join("")}
+          </div>
+          <div class="hr"></div>
+          <h3 class="h-md flex mb-1"><i data-lucide="trophy" style="color:var(--gold)"></i>تازه‌ترین افتخارات</h3>
+          <div class="timeline mt16">
+            ${db.achievements.slice(0,4).map(a=>{ const st=a.studentId?stuById(a.studentId):null; return `<div class="tl-item gold">
+              <div class="small"><b>${esc(a.title)}</b> <span class="medal ${medalIcon[a.medal]}" style="width:20px;height:20px;font-size:10px;vertical-align:middle;margin-inline-start:6px"></span></div>
+              <div class="tiny muted">${st?esc(stuFull(st))+" — ":""}${fmtJ(a.jdate)}</div></div>`; }).join("")}
+          </div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="sec" id="about" style="padding-top:20px"><div class="wrap">
+      <div class="sec-head reveal"><div><h2 class="h-lg">معرفی سامانه</h2><div class="sub">یک زیرساخت کامل مدیریتی — نه صرفاً یک سایت نمایشی</div></div></div>
+      <div class="grid g3">
+        ${[["notebook-pen","مدیریت کامل نمرات","ثبت، ویرایش و حذف نمره ۰ تا ۲۰ با محاسبه خودکار معدل، رتبه و تاریخچه تغییرات","var(--blue-xl)","rgba(59,107,212,.14)"],
+           ["zap","سامانه جنم","امتیازدهی انضباطی اختصاصی مدرسه با قوانین کسر و افزایش، تاریخچه و رتبه‌بندی","var(--orange)","rgba(240,138,93,.14)"],
+           ["file-text","کارنامه آنلاین و چاپی","کارنامه رسمی و زیبا با نمرات هر درس، معدل هر ترم، رتبه کلاس و مدرسه — آماده چاپ","var(--gold)","rgba(245,180,0,.13)"],
+           ["shield-check","امنیت چندلایه","رمزهای هش‌شده، نشست امن، محدودیت تلاش ورود و کنترل دسترسی نقش‌محور","var(--green)","rgba(47,191,138,.13)"],
+           ["castle","پنج قرارگاه تخصصی","فرهنگی، مدیا، نظم، دانایی و انرژی — هرکدام با صفحه، مسئول و گزارش عملکرد اختصاصی","var(--violet)","rgba(139,111,216,.15)"],
+           ["bell-ring","اطلاعیه‌ها و امتحانات","انتشار اطلاعیه با دسته‌بندی و برنامه امتحانات با شمارش معکوس زنده","var(--red)","rgba(239,91,100,.13)"]]
+          .map((f,i)=>`<div class="card card-p reveal" style="animation-delay:${i*.06}s;transition:.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='none'">
+            <div class="mini-ic mb-1" style="background:${f[3]};color:${f[2]}"><i data-lucide="${f[0]}"></i></div>
+            <h3 class="h-md mt8" style="font-size:16px">${f[1]}</h3><p class="muted small mt8">${f[2]}</p></div>`).join("")}
+      </div>
+    </div></section>
+
+    <section class="sec"><div class="wrap"><div class="card card-p reveal" style="text-align:center;padding:48px 24px;background:linear-gradient(135deg,rgba(26,63,135,.35),rgba(240,138,93,.15))">
+      <h2 class="h-lg">همین حالا عضو خانواده فاتحان آینده شوید</h2>
+      <p class="muted mt8" style="max-width:520px;margin:8px auto 0">ثبت‌نام آنلاین انجام دهید؛ پس از تأیید مدیر، حساب شخصی شما فعال و به کارنامه، جنم و اطلاعیه‌ها دسترسی پیدا می‌کنید.</p>
+      <div class="flex mt24" style="justify-content:center">
+        <button class="btn btn-gold" onclick="go('register')"><i data-lucide="user-plus"></i>شروع ثبت‌نام</button>
+        <button class="btn btn-ghost" onclick="go('guide')"><i data-lucide="book-open-check"></i>راهنمای استفاده</button>
+      </div>
+    </div></div></section>
+  </main>
+  ${footerHTML()}`;
+},
+mount(){ animateCounters(); }
+};
+function showAnnouncement(id){
+  const a=db.announcements.find(x=>x.id===id); if(!a) return;
+  UI.modal({title:a.title, icon:"megaphone", wide:true, body:`
+    ${a.img?`<img src="${esc(a.img)}" alt="" style="width:100%;border-radius:14px;margin-bottom:14px;max-height:260px;object-fit:cover">`:""}
+    <div class="flex mb-1"><span class="chip">${esc(a.category)}</span><span class="tiny muted">${fmtDateTime(a.createdAt)}</span></div>
+    <p class="mt16" style="line-height:2">${esc(a.body)}</p>`});
+}
+function showExam(id){
+  const e=db.exams.find(x=>x.id===id); if(!e) return;
+  const st=examStatus(e);
+  UI.modal({title:e.title, icon:"file-pen", body:`
+    <div class="flex mb-1" style="flex-wrap:wrap"><span class="chip"><i data-lucide="calendar"></i>${faD(e.jday)} ${J_MONTHS[e.jmonth-1]}${e.jyear?" "+faD(e.jyear):""}</span>
+    <span class="chip">${e.classId==="all"?"همه پایه‌ها":"کلاس "+clsName(e.classId)}</span>
+    ${e.subjectId?`<span class="chip">${esc(subName(e.subjectId))}</span>`:""}
+    <span class="pill ${st.state==="up"?"p-green":"p-gray"}"><span class="dot"></span>${st.state==="up"?"پیش‌رو":"برگزار شده"}</span></div>
+    <p class="mt16 muted">${esc(e.desc||"توضیحاتی ثبت نشده است.")}</p>`});
+}
+
+/* ================= LOGIN ================= */
+const LoginView = {
+html(p){
+  const role = p==="admin" ? "admin" : "student";
+  const isAdm = role==="admin";
+  return `${navHTML()}
+  <div class="login-wrap">
+    <div class="login-art">
+      <div style="position:relative;z-index:1">
+        <div class="chip mb-1" style="border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08)"><i data-lucide="${isAdm?"shield":"graduation-cap"}"></i>${isAdm?"پنل مدیریت":"پنل دانش‌آموزی"}</div>
+        <h2 class="h-lg mt16" style="color:#fff">${isAdm?"مدیریت یکپارچه مدرسه":"به حساب خود خوش آمدید"}</h2>
+        <p style="color:rgba(255,255,255,.75);font-size:14.5px;margin-top:10px;max-width:420px;line-height:2">${isAdm?"مدیریت نمرات، کلاس‌ها، جنم، امتحانات، اطلاعیه‌ها و تأیید ثبت‌نام‌ها — همه از یک داشبورد امن.":"مشاهده کارنامه و نمرات، معدل و رتبه، موجودی جنم، امتحانات آینده و اطلاعیه‌های مدرسه."}</p>
+        <div class="flex mt24" style="gap:8px;flex-wrap:wrap">${["نمرات زنده","کارنامه چاپی","جنم","رتبه‌بندی","قرارگاه‌ها"].map(t=>`<span class="chip" style="background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">${t}</span>`).join("")}</div>
+      </div>
+    </div>
+    <div class="login-form-side">
+      <form class="login-form reveal" id="loginForm" autocomplete="off">
+        <div class="card card-p">
+          <div class="flex mb-1"><span>${emblemSVG(48)}</span><div><h2 class="h-md">${isAdm?"ورود مدیر مدرسه":"ورود دانش‌آموز"}</h2><div class="tiny muted">${esc(db.settings.schoolName)}</div></div></div>
+          <div class="seg mt16">
+            <button type="button" class="${!isAdm?"on":""}" onclick="go('login/student')"><i data-lucide="graduation-cap" style="width:15px;height:15px;vertical-align:-3px;margin-left:5px"></i>دانش‌آموز</button>
+            <button type="button" class="${isAdm?"on":""}" onclick="go('login/admin')"><i data-lucide="shield" style="width:15px;height:15px;vertical-align:-3px;margin-left:5px"></i>مدیر</button>
+          </div>
+          <div id="loginErr"></div>
+          <div class="field mt16"><label>نام کاربری <b>*</b></label>
+            <div class="in-wrap"><i data-lucide="user"></i><input class="input" id="li_user" placeholder="نام کاربری خود را وارد کنید" dir="ltr" style="text-align:right"></div></div>
+          <div class="field"><label>رمز عبور <b>*</b></label>
+            <div class="in-wrap"><i data-lucide="lock"></i><input class="input" id="li_pass" type="password" placeholder="••••••••"></div></div>
+          <button class="btn ${isAdm?"btn-primary":"btn-accent"}" style="width:100%" type="submit" id="li_btn"><i data-lucide="log-in"></i>ورود به سامانه</button>
+          <div class="hr"></div>
+          <div class="tiny muted" style="background:var(--card2);border:1px dashed var(--border2);border-radius:12px;padding:12px 14px;line-height:2">
+            ${isAdm
+              ? `<i data-lucide="key-round" style="width:13px;height:13px;vertical-align:-2px;color:var(--gold)"></i> حساب اولیه مدیر: <code class="kbd">admin</code> با رمز موقت <code class="kbd">admin1234</code> — در اولین ورود، تغییر رمز <b>اجباری</b> است.`
+              : `حساب نمایشی: <code class="kbd">student</code> با رمز <code class="kbd">12345678</code><br>هنوز حساب ندارید؟ <a href="#/register" style="color:var(--orange);font-weight:700">ثبت‌نام دانش‌آموز جدید</a>`}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  ${footerHTML()}`;
+},
+mount(p){
+  const role=p==="admin"?"admin":"student";
+  $("#loginForm").addEventListener("submit", async ev=>{
+    ev.preventDefault();
+    const btn=$("#li_btn"); btn.disabled=true; btn.innerHTML='<i data-lucide="loader-2" class="spin"></i>در حال بررسی…'; UI.icons();
+    const r=await Auth.login($("#li_user").value, $("#li_pass").value);
+    if(!r.ok){
+      btn.disabled=false; btn.innerHTML='<i data-lucide="log-in"></i>ورود به سامانه'; UI.icons();
+      $("#loginErr").innerHTML=`<div class="err-msg mt16" style="background:rgba(239,91,100,.1);border:1px solid rgba(239,91,100,.35);border-radius:11px;padding:10px 13px"><i data-lucide="alert-circle"></i>${esc(r.err)}</div>`; UI.icons();
+      return;
+    }
+    if(r.user.role!==role){ UI.toast(role==="admin"?"این حساب مدیریتی نیست.":"این حساب دانش‌آموزی نیست؛ از سربرگ درست وارد شوید.","err"); Auth.clear(); btn.disabled=false; btn.innerHTML='<i data-lucide="log-in"></i>ورود به سامانه'; UI.icons(); return; }
+    UI.toast("خوش آمدید! ورود موفق بود.","ok");
+    go(r.user.mustChange ? "change" : (r.user.role==="admin"?"admin/dash":"student/dash"));
+  });
+}
+};
+
+/* ================= REGISTER ================= */
+const RegisterView = {
+html(){
+  return `${navHTML()}
+  <main class="wrap" style="padding:44px 0 60px;max-width:820px">
+    <div class="card card-p reveal" style="padding:34px">
+      <div class="flex mb-1"><span>${emblemSVG(52)}</span><div><h2 class="h-lg" style="font-size:24px">ثبت‌نام دانش‌آموز جدید</h2><div class="muted small">پس از ثبت، حساب شما در صف «در انتظار تأیید» مدیر قرار می‌گیرد و پس از تأیید، فعال می‌شود.</div></div></div>
+      <div class="hr"></div>
+      <form id="regForm" autocomplete="off">
+        <div class="grid g2">
+          <div class="field"><label>نام <b>*</b></label><input class="input" id="rg_fn" placeholder="مثلاً: آرمان"></div>
+          <div class="field"><label>نام خانوادگی <b>*</b></label><input class="input" id="rg_ln" placeholder="مثلاً: رستمی"></div>
+        </div>
+        <div class="grid g2">
+          <div class="field"><label>شماره دانش‌آموزی <b>*</b></label><input class="input" id="rg_sid" placeholder="فقط عدد — یکتا برای هر دانش‌آموز" inputmode="numeric"><div class="hint">شماره دانش‌آموزی تکراری پذیرفته نمی‌شود.</div></div>
+          <div class="field"><label>پایه و کلاس <b>*</b></label>
+            <select class="input" id="rg_class">${db.classes.map(c=>`<option value="${c.id}">پایه ${faD(c.grade)} — کلاس ${c.name}</option>`).join("")}</select></div>
+        </div>
+        <div class="field"><label>نام کاربری <b>*</b></label><input class="input" id="rg_user" placeholder="حروف لاتین و عدد — حداقل ۴ کاراکتر" dir="ltr" style="text-align:right"><div class="hint">نام کاربری تکراری پذیرفته نمی‌شود.</div></div>
+        <div class="grid g2">
+          <div class="field"><label>رمز عبور <b>*</b></label><input class="input" id="rg_pw1" type="password" placeholder="حداقل ۸ کاراکتر، شامل حرف و عدد"></div>
+          <div class="field"><label>تکرار رمز عبور <b>*</b></label><input class="input" id="rg_pw2" type="password" placeholder="رمز را دوباره وارد کنید"></div>
+        </div>
+        <div class="prog" style="margin-top:-6px"><i id="pwStr" style="width:0"></i></div>
+        <div id="regErr"></div>
+        <div class="between mt24">
+          <span class="tiny muted"><i data-lucide="shield-check" style="width:14px;height:14px;vertical-align:-2px;color:var(--green)"></i> رمز شما به‌صورت امن هش (SHA-256) ذخیره می‌شود.</span>
+          <button class="btn btn-accent" type="submit" id="rg_btn"><i data-lucide="user-plus"></i>ثبت درخواست عضویت</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  ${footerHTML()}`;
+},
+mount(){
+  $("#rg_pw1").addEventListener("input", e=>{
+    const v=e.target.value; let s=0;
+    if(v.length>=8) s+=35; if(/[a-zA-Z]/.test(v)&&/\d/.test(v)) s+=35; if(/[^a-zA-Z0-9]/.test(v)) s+=30;
+    $("#pwStr").style.width=s+"%";
+    $("#pwStr").style.background = s<40?"var(--red)":s<75?"var(--gold)":"linear-gradient(90deg,#2FBF8A,#F5B400)";
+  });
+  $("#regForm").addEventListener("submit", async ev=>{
+    ev.preventDefault();
+    const F={fn:$("#rg_fn"),ln:$("#rg_ln"),sid:$("#rg_sid"),cls:$("#rg_class"),user:$("#rg_user"),p1:$("#rg_pw1"),p2:$("#rg_pw2")};
+    Object.values(F).forEach(x=>x.classList&&x.classList.remove("err"));
+    const errs=[]; const mark=(el,m)=>{ el.classList.add("err"); errs.push(m); };
+    const fn=F.fn.value.trim(), ln=F.ln.value.trim(), sid=F.sid.value.trim(), user=F.user.value.trim(), p1=F.pw1.value, p2=F.pw2.value;
+    if(!fn) mark(F.fn,"نام الزامی است");
+    if(!ln) mark(F.ln,"نام خانوادگی الزامی است");
+    if(!/^\d{4,}$/.test(sid)) mark(F.sid,"شماره دانش‌آموزی باید عددی و حداقل ۴ رقم باشد");
+    else if(db.students.some(s=>s.studentId===sid)) mark(F.sid,"این شماره دانش‌آموزی قبلاً ثبت شده است");
+    if(!/^[A-Za-z0-9_.]{4,}$/.test(user)) mark(F.user,"نام کاربری باید لاتین و حداقل ۴ کاراکتر باشد");
+    else if(db.users.some(u=>u.username.toLowerCase()===user.toLowerCase())) mark(F.user,"این نام کاربری قبلاً گرفته شده است");
+    if(p1.length<8 || !/[a-zA-Z]/.test(p1) || !/\d/.test(p1)) mark(F.p1,"رمز باید حداقل ۸ کاراکتر و شامل حرف و عدد باشد");
+    if(p1!==p2) mark(F.p2,"تکرار رمز با رمز یکسان نیست");
+    if(errs.length){ $("#regErr").innerHTML=`<div class="err-msg mt16" style="background:rgba(239,91,100,.1);border:1px solid rgba(239,91,100,.35);border-radius:11px;padding:10px 13px;align-items:flex-start"><i data-lucide="alert-circle" style="flex-shrink:0"></i><span>${errs.map(esc).join("<br>")}</span></div>`; UI.icons(); return; }
+    const salt=uid();
+    const u={id:"u_"+uid(), role:"student", username:user, salt, hash:await hashPW(p1,salt), mustChange:false, createdAt:Date.now()};
+    db.users.push(u);
+    db.students.push({id:"st_"+uid(), userId:u.id, firstName:fn, lastName:ln, studentId:sid, classId:F.cls.value, status:"pending", createdAt:Date.now()});
+    logActivity("سامانه","ثبت‌نام جدید",`${fn} ${ln} (${sid}) — کلاس ${clsName(F.cls.value)}`);
+    DB.save();
+    UI.modal({title:"ثبت‌نام با موفقیت ثبت شد", icon:"check-circle-2", body:`
+      <p>درخواست عضویت شما با شماره دانش‌آموزی <b>${faD(sid)}</b> ثبت شد.</p>
+      <div class="mt16 flex"><span class="pill p-gold"><span class="dot"></span>وضعیت: در انتظار تأیید مدیر</span></div>
+      <p class="muted small mt16">پس از تأیید مدیر مدرسه، می‌توانید با نام کاربری <code class="kbd">${esc(user)}</code> وارد حساب خود شوید.</p>`,
+      actions:[{label:"بازگشت به صفحه اصلی", cls:"btn-primary", icon:"home", onClick:()=>{ go("home"); }}]});
+  });
+}
+};
+
+/* ================= FORCE CHANGE PASSWORD ================= */
+const ForceChangeView = {
+html(){
+  return `<main class="wrap" style="padding:70px 0;max-width:520px">
+    <div class="card card-p reveal" style="padding:34px;text-align:center">
+      <div class="mini-ic ic-gold" style="margin:0 auto;width:64px;height:64px;border-radius:19px"><i data-lucide="key-round" style="width:28px;height:28px"></i></div>
+      <h2 class="h-lg mt16" style="font-size:22px">تغییر رمز عبور اجباری</h2>
+      <p class="muted small mt8">شما با رمز پیش‌فرض اولیه وارد شده‌اید. برای امنیت سامانه، قبل از ادامه <b>باید</b> رمز جدیدی تعریف کنید.</p>
+      <div class="hr"></div>
+      <form id="fcForm" style="text-align:right">
+        <div class="field"><label>رمز عبور فعلی (پیش‌فرض) <b>*</b></label><input class="input" id="fc_old" type="password" placeholder="رمز فعلی"></div>
+        <div class="field"><label>رمز عبور جدید <b>*</b></label><input class="input" id="fc_p1" type="password" placeholder="حداقل ۸ کاراکتر، حرف و عدد"></div>
+        <div class="field"><label>تکرار رمز جدید <b>*</b></label><input class="input" id="fc_p2" type="password" placeholder="تکرار رمز جدید"></div>
+        <div id="fcErr"></div>
+        <button class="btn btn-primary mt8" style="width:100%" type="submit"><i data-lucide="shield-check"></i>ثبت رمز جدید و ورود</button>
+        <button class="btn btn-ghost mt8" style="width:100%" type="button" onclick="Auth.logout()"><i data-lucide="log-out"></i>خروج</button>
+      </form>
+    </div>
+  </main>`;
+},
+mount(){
+  $("#fcForm").addEventListener("submit", async ev=>{
+    ev.preventDefault();
+    const me=Auth.me(); if(!me) return;
+    const o=$("#fc_old").value, p1=$("#fc_p1").value, p2=$("#fc_p2").value;
+    const err=m=>{ $("#fcErr").innerHTML=`<div class="err-msg mt8"><i data-lucide="alert-circle"></i>${esc(m)}</div>`; UI.icons(); };
+    if((await hashPW(o, me.u.salt))!==me.u.hash) return err("رمز فعلی صحیح نیست.");
+    if(p1.length<8 || !/[a-zA-Z]/.test(p1) || !/\d/.test(p1)) return err("رمز جدید باید حداقل ۸ کاراکتر و شامل حرف و عدد باشد.");
+    if(p1!==p2) return err("تکرار رمز یکسان نیست.");
+    if(p1===o) return err("رمز جدید نباید همان رمز پیش‌فرض باشد.");
+    me.u.salt=uid(); me.u.hash=await hashPW(p1, me.u.salt); me.u.mustChange=false;
+    logActivity("مدیر","تغییر رمز مدیر","رمز پیش‌فرض اولیه با رمز امن جایگزین شد");
+    DB.save(); UI.toast("رمز جدید با موفقیت ثبت شد.","ok"); go("admin/dash");
+  });
+}
+};
+
+/* ================= BASE (قرارگاه) PAGE ================= */
+const BaseView = {
+html(p){
+  const b=db.bases.find(x=>x.slug===p);
+  if(!b) return `${navHTML()}<div class="wrap empty mt32"><i data-lucide="ghost"></i>قرارگاه یافت نشد.</div>${footerHTML()}`;
+  return `${navHTML()}
+  <main>
+    <section style="padding:54px 0 30px;background:linear-gradient(180deg,${b.color}14,transparent)"><div class="wrap">
+      <button class="btn btn-ghost btn-sm mb-1" onclick="go('sec/bases')"><i data-lucide="arrow-right"></i>همه قرارگاه‌ها</button>
+      <div class="flex mt16 reveal" style="gap:18px;align-items:flex-start">
+        <div class="base-ic" style="--bcl:${b.color};width:76px;height:76px;border-radius:23px"><i data-lucide="${b.icon}" style="width:36px;height:36px"></i></div>
+        <div><h1 class="h-lg">${esc(b.name)}</h1><p class="muted mt8" style="max-width:640px">${esc(b.desc)}</p></div>
+      </div>
+    </div></section>
+    <section class="wrap" style="padding-bottom:60px"><div class="grid g3">
+      <div class="card card-p reveal"><div class="mini-ic ic-gold mb-1"><i data-lucide="user-cog"></i></div><h3 class="h-md mt8" style="font-size:16px">مسئول قرارگاه</h3>
+        <div class="flex mt16"><span class="avatar lg" style="background:linear-gradient(135deg,${b.color},${b.color}88)">${esc(b.manager.split(" ").pop()[0])}</span><div><b>${esc(b.manager)}</b><div class="tiny muted">کادر اجرایی مدرسه</div></div></div>
+        <div class="hr"></div>
+        <h4 class="small" style="color:var(--muted)">اعضای دانش‌آموزی</h4>
+        <div class="flex mt8" style="flex-wrap:wrap">${b.members.map(m=>`<span class="chip"><i data-lucide="user"></i>${esc(m)}</span>`).join("")}</div></div>
+      <div class="card card-p reveal" style="animation-delay:.08s"><div class="mini-ic ic-blue mb-1"><i data-lucide="calendar-check"></i></div><h3 class="h-md mt8" style="font-size:16px">فعالیت‌های جاری</h3>
+        <div class="timeline mt16">${b.activities.map(a=>`<div class="tl-item"><div class="small"><b>${esc(a)}</b></div><div class="tiny muted">در حال اجرا — نیمسال جاری</div></div>`).join("")}</div></div>
+      <div class="card card-p reveal" style="animation-delay:.16s"><div class="mini-ic ic-green mb-1"><i data-lucide="line-chart"></i></div><h3 class="h-md mt8" style="font-size:16px">گزارش عملکرد</h3>
+        <p class="muted small mt16" style="line-height:2">${esc(b.report)}</p>
+        <div class="mt16"><div class="between tiny muted mb-1"><span>شاخص مشارکت</span><b style="color:${b.color}">${faD(70+db.bases.indexOf(b)*5)}٪</b></div>
+        <div class="prog"><i style="width:0;background:linear-gradient(90deg,${b.color},${b.color}99)" data-w="${70+db.bases.indexOf(b)*5}"></i></div></div></div>
+    </div></section>
+  </main>
+  ${footerHTML()}`;
+},
+mount(){ setTimeout(()=>$$("[data-w]").forEach(el=>el.style.width=el.dataset.w+"%"),250); }
+};
+
+/* ================= GUIDE (راهنمای نصب) ================= */
+const GuideView = {
+html(){
+  const steps=[
+    ["دانلود پروژه","از مخزن GitHub روی <code class='kbd'>Code → Download ZIP</code> کلیک کنید یا با <code class='kbd'>git clone</code> دریافت کنید."],
+    ["آپلود در GitHub","یک Repository عمومی بسازید و فایل‌ها را push کنید. رمزها و اطلاعات واقعی دانش‌آموزان هرگز در مخزن قرار نگیرند."],
+    ["انتشار نسخه نمایشی در GitHub Pages","در Settings → Pages شاخه اصلی را انتخاب کنید. <b>توجه:</b> GitHub Pages فقط نسخه استاتیک و نمایشی را اجرا می‌کند و PHP/MySQL را پشتیبانی نمی‌کند."],
+    ["ساخت دیتابیس MySQL","در هاست (cPanel/DirectAdmin) یک دیتابیس بسازید: <code class='kbd'>CREATE DATABASE fatehan CHARACTER SET utf8mb4;</code> و کاربر اختصاصی تعریف کنید."],
+    ["تنظیم اتصال دیتابیس","مقادیر میزبان، نام دیتابیس، کاربر و رمز را در <code class='kbd'>includes/config.php</code> وارد کنید و این فایل را در <code class='kbd'>.gitignore</code> نگه دارید."],
+    ["آپلود نسخه PHP روی هاست","ساختار پوشه‌ها (<code class='kbd'>public/</code>، <code class='kbd'>includes/</code>، <code class='kbd'>api/</code>، <code class='kbd'>install/</code>) را با FTP یا File Manager روی هاست دارای PHP ۸.۲+ و MySQL آپلود کنید."],
+    ["اجرای نصب اولیه","آدرس <code class='kbd'>/install/</code> را باز کنید تا اتصال بررسی، جدول‌ها ساخته و حساب مدیر ایجاد شود؛ پس از نصب، این بخش قفل می‌شود."],
+    ["تغییر رمز مدیر","با <code class='kbd'>admin / admin1234</code> وارد شوید؛ سامانه در اولین ورود شما را مجبور به تعریف رمز امن جدید می‌کند."],
+    ["ساخت حساب دانش‌آموز","دانش‌آموز از صفحه ثبت‌نام درخواست می‌دهد؛ مدیر در «مدیریت ثبت‌نام‌ها» آن را تأیید می‌کند تا حساب فعال شود."],
+    ["ثبت نمرات","در پنل مدیر → «مدیریت نمرات» کلاس و درس را انتخاب کنید، برگه نمرات را پر کنید؛ معدل، رتبه و کارنامه به‌صورت خودکار به‌روز می‌شوند."]
+  ];
+  return `${navHTML()}
+  <main class="wrap" style="padding:44px 0 60px;max-width:900px">
+    <div class="reveal"><span class="chip"><i data-lucide="book-open-check"></i>README فارسی پروژه</span>
+    <h1 class="h-lg mt16">راهنمای نصب و راه‌اندازی</h1>
+    <p class="muted mt8">این صفحه همان README پروژه است؛ همین‌جا هم همراه سامانه منتشر شده است.</p></div>
+    <div class="mt24 card card-p" style="border-color:rgba(245,180,0,.4);background:linear-gradient(90deg,rgba(245,180,0,.08),var(--card2))">
+      <div class="flex"><i data-lucide="alert-triangle" style="color:var(--gold);flex-shrink:0"></i><div><b>نسخه نمایشی در مقابل نسخه کامل</b><div class="small muted">چیزی که الان می‌بینید نسخه <b>استاتیک و نمایشی</b> است (مناسب GitHub Pages) که دیتابیس را در مرورگر شبیه‌سازی می‌کند. نسخه کامل با PHP ۸.۲، MySQL و PDO باید روی هاست نصب شود؛ ساختار آن در همین مخزن موجود است.</div></div></div>
+    </div>
+    <div class="grid mt24" style="gap:12px">
+      ${steps.map((s,i)=>`<div class="step reveal" style="animation-delay:${i*.04}s"><span class="step-n">${faD(i+1)}</span><div><b>${s[0]}</b><div class="small muted" style="line-height:2">${s[1]}</div></div></div>`).join("")}
+    </div>
+    <div class="card card-p mt24">
+      <h3 class="h-md flex"><i data-lucide="folder-tree" style="color:var(--orange)"></i>ساختار فایل‌های نسخه کامل</h3>
+      <pre class="mt16 small" style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:18px;overflow-x:auto;direction:ltr;text-align:left;line-height:1.9;font-family:monospace;color:var(--muted)">public/            ← صفحات عمومی (index, login, register)
+  student/ admin/  ← پنل‌ها
+  assets/css|js|images/
+includes/          ← config.php, database.php, auth.php, security.php
+api/               ← students/ grades/ classes/ exams/ announcements/
+install/           ← index.php + database.sql
+README.md</pre>
+      <div class="mt16 small muted" style="line-height:2"><i data-lucide="shield-check" style="width:14px;height:14px;vertical-align:-2px;color:var(--green)"></i> امنیت: <code class="kbd">password_hash</code> برای رمزها، PDO Prepared Statements در برابر SQL Injection، نشست امن، توکن CSRF و محدودیت تلاش ورود. فایل <code class="kbd">config.php</code> و داده‌های واقعی دانش‌آموزان در مخزن عمومی قرار نمی‌گیرند.</div>
+    </div>
+    <div class="flex mt24" style="justify-content:center"><button class="btn btn-primary" onclick="go('install')"><i data-lucide="wrench"></i>اجرای نصب‌ساز نمایشی</button></div>
+  </main>
+  ${footerHTML()}`;
+}
+};
+
+/* ================= INSTALLER (نمایشی) ================= */
+const InstallView = {
+html(){
+  return `${navHTML()}
+  <main class="wrap" style="padding:54px 0 70px;max-width:640px">
+    <div class="card card-p reveal" style="padding:36px;text-align:center">
+      <div class="mini-ic ic-blue" style="margin:0 auto;width:64px;height:64px;border-radius:19px"><i data-lucide="database-zap" style="width:28px;height:28px"></i></div>
+      <h2 class="h-lg mt16" style="font-size:22px">نصب‌ساز سامانه (نمایشی)</h2>
+      <p class="muted small mt8">در نسخه PHP این بخش اتصال MySQL را بررسی، جدول‌ها را می‌سازد و حساب مدیر را ایجاد می‌کند. اینجا همان مراحل روی دیتابیس مرورگر شبیه‌سازی می‌شود.</p>
+      <div class="hr"></div>
+      <div id="instSteps" style="text-align:right;max-width:420px;margin:0 auto"></div>
+      <div class="prog mt16" style="max-width:420px;margin:0 auto"><i id="instBar" style="width:0"></i></div>
+      <div id="instDone" class="mt24"></div>
+    </div>
+  </main>
+  ${footerHTML()}`;
+},
+mount(){
+  const steps=["بررسی اتصال دیتابیس","ساخت جدول‌های users، students، grades و…","ایجاد حساب مدیر اولیه (admin)","ثبت کلاس‌های ۷/۱ تا ۹/۲ و دروس","قفل‌کردن نصب‌ساز پس از اتمام"];
+  const box=$("#instSteps");
+  box.innerHTML=steps.map((s,i)=>`<div class="flex mb-1" id="ist${i}" style="opacity:.35"><span class="mini-ic" style="width:30px;height:30px;background:var(--card3)"><i data-lucide="circle"></i></span><span class="small">${s}</span></div>`).join("");
+  UI.icons();
+  let i=0;
+  const run=()=>{ if(i>=steps.length){
+      $("#instBar").style.width="100%";
+      $("#instDone").innerHTML=`<div class="pill p-green" style="margin:0 auto 14px"><span class="dot"></span>نصب اولیه با موفقیت انجام و نصب‌ساز قفل شد</div>
+        <div class="tiny muted mb-1">زمان نصب: ${fmtDateTime(db.installedAt)}</div>
+        <div class="flex mt16" style="justify-content:center">
+          <button class="btn btn-primary btn-sm" onclick="go('login/admin')"><i data-lucide="log-in"></i>ورود مدیر</button>
+          <button class="btn btn-danger btn-sm" onclick="resetDemo()"><i data-lucide="refresh-ccw"></i>بازنشانی داده‌های نمایشی</button>
+        </div>`; UI.icons(); return; }
+    const el=$("#ist"+i); el.style.opacity=1;
+    el.querySelector(".mini-ic").innerHTML='<i data-lucide="loader-2" style="animation:spin 1s linear infinite"></i>'; UI.icons();
+    setTimeout(()=>{ el.querySelector(".mini-ic").innerHTML='<i data-lucide="check-circle-2" style="color:var(--green)"></i>'; UI.icons();
+      $("#instBar").style.width=((i+1)/steps.length*100)+"%"; i++; run(); }, 520);
+  };
+  setTimeout(run, 500);
+}
+};
+function resetDemo(){
+  UI.confirm("همه داده‌های نمایشی (از جمله حساب‌های جدید) پاک و داده‌های اولیه دوباره ساخته می‌شوند. ادامه می‌دهید؟", async ()=>{
+    DB.wipe(); Auth.clear(); await seedDatabase(); DB.save(); UI.toast("داده‌های نمایشی بازنشانی شد.","ok"); go("home");
+  }, "بازنشانی");
+}
+
+/* ================= PANEL SHELL ================= */
+function closeSide(){ const s=$("#sidebar"), sc=$("#scrim"); if(s) s.classList.remove("open"); if(sc) sc.classList.remove("show"); }
+function openSide(){ const s=$("#sidebar"), sc=$("#scrim"); if(s) s.classList.add("open"); if(sc) sc.classList.add("show"); }
+function panelShell({base, sub, links, userCard, content, title, icon, piCls}){
+  const theme=localStorage.getItem("fa_theme")||"dark";
+  return `<div class="layout">
+    <div class="scrim" id="scrim" onclick="closeSide()"></div>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#/home" style="padding:0 8px 16px;border-bottom:1px solid var(--border)">${emblemSVG(40)}<span><b style="font-size:15px">فاتحان آینده</b><span>سامانه مدیریت مدرسه</span></span></a>
+      ${userCard}
+      <div class="side-sec">منوی ${base==="admin"?"مدیریت":"دانش‌آموز"}</div>
+      ${links.map(l=>`<a class="side-link ${l.id===sub?"on":""}" href="#/${base}/${l.id}"><i data-lucide="${l.icon}"></i>${l.t}${l.cnt?`<span class="cnt">${faD(l.cnt)}</span>`:""}</a>`).join("")}
+      <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border)">
+        <a class="side-link" href="#/home"><i data-lucide="globe"></i>صفحه اصلی سایت</a>
+        <button class="side-link" style="width:100%;text-align:right;color:var(--red)" onclick="Auth.logout()"><i data-lucide="log-out"></i>خروج از حساب</button>
+      </div>
+    </aside>
+    <div class="main-col">
+      <div class="page-head">
+        <div class="flex"><button class="icon-btn hamb" onclick="openSide()"><i data-lucide="menu"></i></button>
+          <h2><span class="pi ${piCls||"ic-blue"}"><i data-lucide="${icon}"></i></span><span>${title}<div class="crumb">${dayNameFa()}، ${fmtJFull(todayJ())}</div></span></h2></div>
+        <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="${theme==="dark"?"sun":"moon"}"></i></button>
+      </div>
+      <div id="subview" class="reveal">${content}</div>
+    </div>
+  </div>`;
+}
+
+/* ================= STUDENT PANEL ================= */
+const StudentLinks = [
+  {id:"dash", t:"داشبورد", icon:"layout-dashboard"},
+  {id:"report", t:"کارنامه", icon:"file-text"},
+  {id:"grades", t:"نمرات دروس", icon:"notebook-pen"},
+  {id:"merits", t:"جنم من", icon:"zap"},
+  {id:"exams", t:"امتحانات", icon:"calendar-clock"},
+  {id:"news", t:"اطلاعیه‌ها", icon:"megaphone"},
+  {id:"honors", t:"افتخارات", icon:"trophy"},
+  {id:"settings", t:"تنظیمات حساب", icon:"settings"}
+];
+const StudentView = {
+html(p){
+  const me=Auth.me(); if(!me||!me.st) return "";
+  const sub = StudentLinks.some(l=>l.id===p) ? p : "dash";
+  const F=StudentSubs[sub]||StudentSubs.dash;
+  const userCard=`<div class="card card-p mt16" style="padding:14px;background:linear-gradient(135deg,rgba(59,107,212,.18),var(--card2))">
+    <div class="flex"><span class="avatar">${esc(me.st.firstName[0])}</span><div style="min-width:0"><b style="font-size:14px">${esc(stuFull(me.st))}</b><div class="tiny muted">کلاس ${clsName(me.st.classId)} — ${faD(me.st.studentId)}</div></div></div>
+    <div class="flex mt8"><span class="pill ${STATUS[me.st.status].c}"><span class="dot"></span>${STATUS[me.st.status].t}</span></div></div>`;
+  const links=StudentLinks.map(l=>({...l, cnt:l.id==="news"?db.announcements.filter(a=>a.published).length:0}));
+  return panelShell({base:"student", sub, links, userCard, content:F.html(me), title:F.title, icon:F.icon, piCls:F.piCls});
+},
+mount(p){ const me=Auth.me(); const sub=StudentLinks.some(l=>l.id===p)?p:"dash"; const F=StudentSubs[sub]; if(F.mount) F.mount(me); }
+};
+
+const StudentSubs = {
+/* ---- داشبورد دانش‌آموز ---- */
+dash:{
+  title:"داشبورد دانش‌آموز", icon:"layout-dashboard", piCls:"ic-blue",
+  html(me){
+    const s=me.st, gpa=gpaOf(s.id), rc=rankInClass(s.id), rs=rankInSchool(s.id), bal=meritBalance(s.id);
+    const exams=db.exams.filter(e=>e.classId==="all"||e.classId===s.classId).map(e=>({e,st:examStatus(e)})).filter(x=>x.st.state==="up").sort((a,b)=>a.st.days-b.st.days).slice(0,3);
+    const news=db.announcements.filter(a=>a.published).sort((a,b)=>b.createdAt-a.createdAt).slice(0,2);
+    return `<div class="grid g4">
+      <div class="card kpi"><div class="ic ic-gold"><i data-lucide="star"></i></div><div class="num">${gpa!==null?faD(gpa):"—"}</div><div class="lbl">معدل کل (از ۲۰)</div></div>
+      <div class="card kpi"><div class="ic ic-blue"><i data-lucide="users"></i></div><div class="num">${rc?faD(rc.rank):"—"}</div><div class="lbl">رتبه در کلاس ${clsName(s.classId)} (از ${rc?faD(rc.total):"۰"})</div></div>
+      <div class="card kpi"><div class="ic ic-violet"><i data-lucide="school"></i></div><div class="num">${rs?faD(rs.rank):"—"}</div><div class="lbl">رتبه در مدرسه (از ${rs?faD(rs.total):"۰"})</div></div>
+      <div class="card kpi"><div class="ic ${bal>=0?"ic-green":"ic-red"}"><i data-lucide="zap"></i></div><div class="num" style="color:${bal>=0?"var(--green)":"var(--red)"}">${faD(bal>0?"+"+bal:bal)}</div><div class="lbl">موجودی جنم</div></div>
+    </div>
+    <div class="grid mt24" style="grid-template-columns:1.15fr .85fr">
+      <div class="card card-p"><div class="between"><h3 class="h-md flex"><i data-lucide="radar" style="color:var(--blue-xl)"></i>نمودار عملکرد درسی</h3><span class="tiny muted">میانگین هر درس (ترم ۱ و ۲)</span></div>
+        <div style="position:relative;height:300px" class="mt16"><canvas id="chRadar"></canvas></div></div>
+      <div class="grid" style="gap:16px;align-content:start">
+        <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="calendar-clock" style="color:var(--orange)"></i>امتحانات پیش‌رو</h3>
+          <div class="grid mt16" style="gap:10px">${exams.map(({e,st})=>`<div class="exam-row" style="padding:12px 14px">
+            <div class="exam-date" style="width:48px;height:48px;border-radius:13px"><b style="font-size:16px">${faD(e.jday)}</b><span>${J_MONTHS[e.jmonth-1]}</span></div>
+            <div style="flex:1;min-width:0"><b class="small">${esc(e.title)}</b><div class="tiny muted">${e.subjectId?esc(subName(e.subjectId)):"همه دروس"}</div></div>
+            <span class="chip count-chip">${st.days===0?"امروز":faD(st.days)+" روز"}</span></div>`).join("") || `<div class="empty" style="padding:20px"><i data-lucide="calendar-x"></i>امتحانی نیست.</div>`}</div></div>
+        <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="megaphone" style="color:var(--gold)"></i>تازه‌ترین اطلاعیه‌ها</h3>
+          <div class="grid mt16" style="gap:10px">${news.map(a=>`<div class="mini-row" style="cursor:pointer" onclick="showAnnouncement('${a.id}')"><div class="mini-ic ic-gold" style="width:36px;height:36px"><i data-lucide="bell"></i></div><div style="min-width:0"><b class="small">${esc(a.title)}</b><div class="tiny muted">${timeAgo(a.createdAt)}</div></div></div>`).join("")}</div></div>
+      </div>
+    </div>`;
+  },
+  mount(me){
+    const labels=db.subjects.map(s=>s.name);
+    const data=db.subjects.map(s=>subjectAvg(me.st.id, s.id) ?? 0);
+    const ctx=$("#chRadar"); if(!ctx||!window.Chart) return;
+    Charts.make(ctx,{type:"radar",data:{labels,datasets:[{label:"میانگین درس",data,fill:true,backgroundColor:"rgba(59,107,212,.18)",borderColor:"#3B6BD4",pointBackgroundColor:"#F08A5D",pointRadius:3.5,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:20,ticks:{stepSize:5,backdropColor:"transparent"},grid:{color:"rgba(140,160,200,.14)"},angleLines:{color:"rgba(140,160,200,.14)"},pointLabels:{font:{size:10.5,family:"Vazirmatn"}}}},plugins:{legend:{display:false}}}});
+  }
+},
+/* ---- کارنامه ---- */
+report:{
+  title:"کارنامه تحصیلی", icon:"file-text", piCls:"ic-gold",
+  html(me){
+    const s=me.st, gpa=gpaOf(s.id), rc=rankInClass(s.id), rs=rankInSchool(s.id), bal=meritBalance(s.id);
+    const rows=db.subjects.map(sub=>{
+      const t1c=db.grades.find(g=>g.studentId===s.id&&g.subjectId===sub.id&&g.term===1&&g.type==="مستمر"&&g.status==="approved");
+      const t1f=db.grades.find(g=>g.studentId===s.id&&g.subjectId===sub.id&&g.term===1&&g.type==="پایانی"&&g.status==="approved");
+      const t2c=db.grades.find(g=>g.studentId===s.id&&g.subjectId===sub.id&&g.term===2&&g.type==="مستمر"&&g.status==="approved");
+      const t2f=db.grades.find(g=>g.studentId===s.id&&g.subjectId===sub.id&&g.term===2&&g.status==="پایانی"&&g.status==="approved");
+      const ov=subjectAvg(s.id,sub.id);
+      return {sub,t1c,t1f,t2c,t2f,ov};
+    });
+    const cv=v=>v?faD(v.value):"—";
+    window.__reportRows=rows;
+    return `<div class="between mb-1"><span class="chip"><i data-lucide="badge-check"></i>کارنامه رسمی — فقط نمرات تأییدشده</span>
+      <button class="btn btn-primary btn-sm" onclick="printReport('${s.id}')"><i data-lucide="printer"></i>چاپ کارنامه</button></div>
+    <div class="card mt16" style="overflow:hidden">
+      <div style="background:linear-gradient(135deg,#132a5e,#1A3F87 60%,#F08A5D 160%);padding:26px 28px;color:#fff">
+        <div class="between"><div class="flex" style="gap:14px"><span>${emblemSVG(54)}</span><div><b style="font-size:19px">${esc(db.settings.schoolName)}</b><div style="font-size:12.5px;opacity:.85">کارنامه ارزشیابی تحصیلی — سال ${faD(db.settings.year)}</div></div></div>
+        <span class="chip" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">${dayNameFa()} ${fmtJ(todayJ())}</span></div>
+      </div>
+      <div class="card-p">
+        <div class="grid g4">
+          <div><div class="tiny muted">دانش‌آموز</div><b>${esc(stuFull(s))}</b></div>
+          <div><div class="tiny muted">شماره دانش‌آموزی</div><b>${faD(s.studentId)}</b></div>
+          <div><div class="tiny muted">پایه / کلاس</div><b>پایه ${faD(db.classes.find(c=>c.id===s.classId)?.grade||"—")} — ${clsName(s.classId)}</b></div>
+          <div><div class="tiny muted">وضعیت</div><span class="pill p-green"><span class="dot"></span>فعال</span></div>
+        </div>
+      </div>
+      <div class="tbl-wrap" style="border:none;border-radius:0;border-top:1px solid var(--border)">
+        <table class="tbl"><thead><tr><th>درس</th><th>مستمر ترم ۱</th><th>پایانی ترم ۱</th><th>مستمر ترم ۲</th><th>پایانی ترم ۲</th><th>میانگین</th><th>وضعیت</th></tr></thead>
+        <tbody>${rows.map(r=>`<tr><td><div class="flex"><span class="mini-ic" style="width:30px;height:30px;background:var(--card3)"><i data-lucide="${r.sub.icon}" style="width:15px;height:15px"></i></span><b>${esc(r.sub.name)}</b></div></td>
+          <td>${cv(r.t1c)}</td><td>${cv(r.t1f)}</td><td>${cv(r.t2c)}</td><td>${cv(r.t2f)}</td>
+          <td>${r.ov!==null?`<span class="score-badge ${gradeColorCls(r.ov)}">${faD(r.ov)}</span>`:"—"}</td>
+          <td>${r.ov!==null?(r.ov>=10?'<span class="pill p-green"><span class="dot"></span>قبول</span>':'<span class="pill p-red"><span class="dot"></span>تکرار</span>'):"—"}</td></tr>`).join("")}</tbody></table>
+      </div>
+      <div class="card-p grid g4" style="background:var(--card2)">
+        <div class="flex"><span class="mini-ic ic-gold"><i data-lucide="star"></i></span><div><div class="tiny muted">معدل کل</div><b style="font-size:18px">${gpa!==null?faD(gpa):"—"}</b></div></div>
+        <div class="flex"><span class="mini-ic ic-blue"><i data-lucide="users"></i></span><div><div class="tiny muted">رتبه در کلاس</div><b style="font-size:18px">${rc?faD(rc.rank)+" از "+faD(rc.total):"—"}</b></div></div>
+        <div class="flex"><span class="mini-ic ic-violet"><i data-lucide="school"></i></span><div><div class="tiny muted">رتبه در مدرسه</div><b style="font-size:18px">${rs?faD(rs.rank)+" از "+faD(rs.total):"—"}</b></div></div>
+        <div class="flex"><span class="mini-ic ${bal>=0?"ic-green":"ic-red"}"><i data-lucide="zap"></i></span><div><div class="tiny muted">جنم</div><b style="font-size:18px;color:${bal>=0?"var(--green)":"var(--red)"}">${faD(bal>0?"+"+bal:bal)}</b></div></div>
+      </div>
+    </div>`;
+  }
+},
+/* ---- نمرات دروس ---- */
+grades:{
+  title:"نمرات دروس", icon:"notebook-pen", piCls:"ic-blue",
+  html(me){
+    const s=me.st;
+    const rows=db.grades.filter(g=>g.studentId===s.id&&g.status==="approved").sort((a,b)=>db.subjects.findIndex(x=>x.id===a.subjectId)-db.subjects.findIndex(x=>x.id===b.subjectId));
+    return `<div class="card card-p"><div class="between"><h3 class="h-md">همه نمرات تأییدشده</h3><span class="tiny muted"><i data-lucide="lock" style="width:13px;height:13px;vertical-align:-2px"></i> نمرات فقط توسط مدیر قابل ثبت و ویرایش است.</span></div>
+    <div class="tbl-wrap mt16"><table class="tbl"><thead><tr><th>درس</th><th>ترم</th><th>نوع</th><th>نمره</th><th>تاریخ امتحان</th><th>توضیح</th></tr></thead><tbody>
+    ${rows.map(g=>{const sub=db.subjects.find(x=>x.id===g.subjectId);return `<tr><td><div class="flex"><i data-lucide="${sub?sub.icon:"book"}" style="width:16px;height:16px;color:var(--blue-xl)"></i>${esc(sub?sub.name:"—")}</div></td>
+      <td><span class="chip">ترم ${faD(g.term)}</span></td><td>${esc(g.type)}</td>
+      <td><span class="score-badge ${gradeColorCls(g.value)}">${faD(g.value)}</span></td>
+      <td class="muted small">${fmtJ(g.jdate)}</td><td class="muted small">${esc(g.note||"—")}</td></tr>`;}).join("")||`<tr><td colspan="6"><div class="empty"><i data-lucide="inbox"></i>نمره‌ای ثبت نشده است.</div></td></tr>`}
+    </tbody></table></div></div>`;
+  }
+},
+/* ---- جنم ---- */
+merits:{
+  title:"جنم من", icon:"zap", piCls:"ic-orange",
+  html(me){
+    const s=me.st, bal=meritBalance(s.id);
+    const mr=meritRanking(); const pos=mr.findIndex(x=>x.s.id===s.id)+1;
+    const tx=db.merits.filter(m=>m.studentId===s.id).sort((a,b)=>b.at-a.at);
+    return `<div class="grid" style="grid-template-columns:.9fr 1.1fr">
+      <div class="grid" style="gap:16px;align-content:start">
+        <div class="card card-p" style="text-align:center;background:linear-gradient(180deg,rgba(240,138,93,.08),var(--card2))">
+          <div class="mini-ic ic-orange" style="margin:0 auto"><i data-lucide="zap"></i></div>
+          <div class="muted small mt8">موجودی جنم شما</div>
+          <div class="merit-big" style="color:${bal>=0?"var(--green)":"var(--red)"}">${faD(bal>0?"+"+bal:bal)}</div>
+          <div class="tiny muted mt8">رتبه ${faD(pos)} از ${faD(mr.length)} دانش‌آموز در جنم مدرسه</div>
+        </div>
+        <div class="card card-p"><h4 class="h-md" style="font-size:15px">قوانین جنم</h4>
+          <div class="grid mt16" style="gap:9px">${MERIT_RULES.map(r=>`<div class="mini-row" style="padding:10px 13px"><span class="score-badge sc-lo" style="min-width:46px">${faD(r.v)}</span><span class="small">${esc(r.t)}</span><i data-lucide="${r.icon}" class="muted" style="width:15px;height:15px;margin-inline-start:auto"></i></div>`).join("")}</div>
+          <div class="hint mt16">هر دانش‌آموز با صفر جنم آغاز می‌کند؛ رفتارهای مثبت امتیاز مثبت می‌گیرند.</div></div>
+      </div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="history" style="color:var(--blue-xl)"></i>تاریخچه تراکنش‌های جنم</h3>
+        <div class="timeline mt16">${tx.map(t=>`<div class="tl-item ${t.delta<0?"red":"green"}">
+          <div class="between"><b class="small">${esc(t.reason)}</b><span class="score-badge ${t.delta<0?"sc-lo":"sc-hi"}">${faD(t.delta>0?"+"+t.delta:t.delta)}</span></div>
+          <div class="tiny muted">${fmtDateTime(t.at)} — ثبت‌کننده: ${esc(t.admin)}</div></div>`).join("")||`<div class="empty"><i data-lucide="inbox"></i>تراکنشی ثبت نشده است.</div>`}</div>
+      </div>
+    </div>`;
+  }
+},
+/* ---- امتحانات ---- */
+exams:{
+  title:"امتحانات", icon:"calendar-clock", piCls:"ic-red",
+  html(me){
+    const s=me.st;
+    const all=db.exams.filter(e=>e.classId==="all"||e.classId===s.classId).map(e=>({e,st:examStatus(e)}));
+    const up=all.filter(x=>x.st.state==="up").sort((a,b)=>a.st.days-b.st.days);
+    const past=all.filter(x=>x.st.state==="past").sort((a,b)=>a.st.days-b.st.days);
+    const row=({e,st})=>`<div class="exam-row"><div class="exam-date"><b>${faD(e.jday)}</b><span>${J_MONTHS[e.jmonth-1]}</span></div>
+      <div style="flex:1"><b>${esc(e.title)}</b><div class="tiny muted">${e.subjectId?esc(subName(e.subjectId))+" — ":""}${e.classId==="all"?"همه پایه‌ها":"کلاس "+clsName(e.classId)}</div></div>
+      <div class="flex">${st.state==="up"?`<span class="chip count-chip"><i data-lucide="hourglass"></i>${st.days===0?"امروز":faD(st.days)+" روز مانده"}</span>`:`<span class="chip"><i data-lucide="check"></i>برگزار شد</span>`}
+      <button class="btn btn-ghost btn-sm" onclick="showExam('${e.id}')"><i data-lucide="info"></i></button></div></div>`;
+    return `<div class="grid g2">
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="alarm-clock" style="color:var(--orange)"></i>امتحانات آینده</h3><div class="grid mt16" style="gap:10px">${up.map(row).join("")||`<div class="empty"><i data-lucide="calendar-x"></i>امتحانی نیست.</div>`}</div></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="archive" style="color:var(--muted)"></i>امتحانات گذشته</h3><div class="grid mt16" style="gap:10px">${past.map(row).join("")||`<div class="empty"><i data-lucide="calendar-x"></i>امتحانی نیست.</div>`}</div></div>
+    </div>`;
+  }
+},
+/* ---- اطلاعیه‌ها ---- */
+news:{
+  title:"اطلاعیه‌های مدرسه", icon:"megaphone", piCls:"ic-gold",
+  html(){
+    const list=db.announcements.filter(a=>a.published).sort((a,b)=>b.createdAt-a.createdAt);
+    return `<div class="grid" style="gap:12px">${list.map(a=>`<div class="card card-p reveal">
+      <div class="between"><div class="flex"><span class="mini-ic ic-gold"><i data-lucide="bell"></i></span><div><b>${esc(a.title)}</b><div class="tiny muted">${fmtDateTime(a.createdAt)}</div></div></div>
+      <div class="flex"><span class="chip">${esc(a.category)}</span><button class="btn btn-ghost btn-sm" onclick="showAnnouncement('${a.id}')"><i data-lucide="eye"></i>مشاهده</button></div></div>
+      <p class="muted small mt8">${esc(a.body.slice(0,180))}…</p></div>`).join("")||`<div class="empty card"><i data-lucide="inbox"></i>اطلاعیه‌ای نیست.</div>`}</div>`;
+  }
+},
+/* ---- افتخارات ---- */
+honors:{
+  title:"افتخارات", icon:"trophy", piCls:"ic-gold",
+  html(me){
+    const mine=db.achievements.filter(a=>a.studentId===me.st.id);
+    const med={gold:["طلا","m1"],silver:["نقره","m2"],bronze:["برنز","m3"]};
+    const card=a=>`<div class="card card-p"><div class="flex"><span class="medal ${med[a.medal][1]}" style="width:44px;height:44px"><i data-lucide="medal"></i></span>
+      <div style="flex:1"><b>${esc(a.title)}</b><div class="tiny muted">${esc(a.desc||"")}</div></div></div>
+      <div class="flex mt8"><span class="chip">مدال ${med[a.medal][0]}</span><span class="chip">${esc(a.type)}</span><span class="tiny muted">${fmtJ(a.jdate)}</span></div></div>`;
+    return `${mine.length?`<div class="grid g2">${mine.map(card).join("")}</div>`:`<div class="empty card"><i data-lucide="trophy"></i><b>هنوز افتخاری برای شما ثبت نشده است.</b><div class="small mt8">با فعالیت در قرارگاه‌ها و مسابقات، اولین مدال خود را بگیرید!</div></div>`}
+      <div class="card card-p mt24"><h3 class="h-md flex mb-1"><i data-lucide="school" style="color:var(--gold)"></i>افتخارات اخیر مدرسه</h3>
+      <div class="timeline mt16">${db.achievements.map(a=>{const st=a.studentId?stuById(a.studentId):null;return `<div class="tl-item gold"><b class="small">${esc(a.title)}</b> <span class="medal ${med[a.medal][1]}" style="width:18px;height:18px;font-size:9px;vertical-align:middle"></span><div class="tiny muted">${st?esc(stuFull(st)):"تیم مدرسه"} — ${fmtJ(a.jdate)}</div></div>`;}).join("")}</div></div>`;
+  }
+},
+/* ---- تنظیمات ---- */
+settings:{
+  title:"تنظیمات حساب", icon:"settings", piCls:"ic-violet",
+  html(me){
+    const s=me.st;
+    return `<div class="grid g2">
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="id-card" style="color:var(--blue-xl)"></i>مشخصات دانش‌آموز</h3>
+        <div class="grid mt16" style="gap:12px">
+          ${[["نام و نام خانوادگی",stuFull(s)],["شماره دانش‌آموزی",faD(s.studentId)],["پایه و کلاس",`پایه ${faD(db.classes.find(c=>c.id===s.classId)?.grade)} — ${clsName(s.classId)}`],["نام کاربری",me.u.username],["وضعیت حساب",STATUS[s.status].t],["تاریخ عضویت",fmtDateTime(s.createdAt)]].map(x=>`<div class="mini-row" style="cursor:default"><div style="flex:1"><div class="tiny muted">${x[0]}</div><b class="small">${esc(x[1])}</b></div></div>`).join("")}
+        </div></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="key-round" style="color:var(--orange)"></i>تغییر رمز عبور</h3>
+        <form id="stuPw" class="mt16">
+          <div class="field"><label>رمز فعلی</label><input class="input" id="sp0" type="password"></div>
+          <div class="field"><label>رمز جدید (حداقل ۸ کاراکتر، حرف و عدد)</label><input class="input" id="sp1" type="password"></div>
+          <div class="field"><label>تکرار رمز جدید</label><input class="input" id="sp2" type="password"></div>
+          <button class="btn btn-primary" type="submit"><i data-lucide="save"></i>ذخیره رمز جدید</button>
+        </form>
+        <div class="hr"></div>
+        ${["رمز شما هرگز به‌صورت متن ساده ذخیره نمی‌شود (هش امن)","نمرات، جنم و کارنامه فقط توسط مدیر قابل تغییر است","پس از پایان کار حتماً از حساب خارج شوید","نشست شما با بستن مرورگر به‌صورت خودکار پایان می‌یابد"].map(t=>`<div class="flex small muted" style="gap:8px;margin-bottom:6px"><i data-lucide="check" style="width:14px;height:14px;color:var(--green);flex-shrink:0;margin-top:3px"></i>${esc(t)}</div>`).join("")}
+      </div>
+    </div>`;
+  },
+  mount(me){
+    $("#stuPw").addEventListener("submit", async ev=>{
+      ev.preventDefault();
+      const o=$("#sp0").value,p1=$("#sp1").value,p2=$("#sp2").value;
+      if((await hashPW(o,me.u.salt))!==me.u.hash) return UI.toast("رمز فعلی اشتباه است.","err");
+      if(p1.length<8||!/[a-zA-Z]/.test(p1)||!/\d/.test(p1)) return UI.toast("رمز جدید باید حداقل ۸ کاراکتر و شامل حرف و عدد باشد.","err");
+      if(p1!==p2) return UI.toast("تکرار رمز یکسان نیست.","err");
+      me.u.salt=uid(); me.u.hash=await hashPW(p1,me.u.salt);
+      logActivity("دانش‌آموز","تغییر رمز",stuFull(me.st)); DB.save();
+      UI.toast("رمز عبور با موفقیت تغییر کرد.","ok"); ev.target.reset();
+    });
+  }
+}
+};
+
+/* ---- PRINT REPORT ENGINE ---- */
+function printReport(sid){
+  const s=stuById(sid); if(!s) return;
+  const rows=window.__reportRows||[];
+  const gpa=gpaOf(sid), rc=rankInClass(sid), rs=rankInSchool(sid), bal=meritBalance(sid);
+  const cv=v=>v?faD(v.value):"—";
+  let area=$(".print-area");
+  if(!area){ area=document.createElement("div"); area.className="print-area"; document.body.appendChild(area); }
+  area.innerHTML=`<div style="max-width:800px;margin:0 auto;font-family:Vazirmatn">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #1A3F87;padding-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg width="52" height="52" viewBox="0 0 64 64"><defs><linearGradient id="pg${++__eid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6BD4"/><stop offset="1" stop-color="#F08A5D"/></linearGradient></defs><path d="M32 3 56 12v18c0 15-10 26-24 31C18 56 8 45 8 30V12z" fill="url(#pg${__eid})"/><path d="M32 14l4 9 10 1-7.5 6.5L41 41l-9-5.5L23 41l2.5-10.5L18 24l10-1z" fill="#fff"/></svg>
+        <div><b style="font-size:19px">${esc(db.settings.schoolName)}</b><div style="font-size:12px;color:#556">کارنامه ارزشیابی تحصیلی — سال تحصیلی ${faD(db.settings.year)}</div></div>
+      </div>
+      <div style="font-size:12px;color:#556">تاریخ صدور: ${fmtJ(todayJ())}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;font-size:13px">
+      <div><span style="color:#778">دانش‌آموز:</span> <b>${esc(stuFull(s))}</b></div>
+      <div><span style="color:#778">شماره دانش‌آموزی:</span> <b>${faD(s.studentId)}</b></div>
+      <div><span style="color:#778">کلاس:</span> <b>${clsName(s.classId)}</b></div>
+      <div><span style="color:#778">معدل کل:</span> <b>${gpa!==null?faD(gpa):"—"}</b></div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead><tr style="background:#1A3F87;color:#fff"><th style="padding:8px;border:1px solid #ddd">درس</th><th style="padding:8px;border:1px solid #ddd">مستمر ۱</th><th style="padding:8px;border:1px solid #ddd">پایانی ۱</th><th style="padding:8px;border:1px solid #ddd">مستمر ۲</th><th style="padding:8px;border:1px solid #ddd">پایانی ۲</th><th style="padding:8px;border:1px solid #ddd">میانگین</th><th style="padding:8px;border:1px solid #ddd">وضعیت</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr><td style="padding:7px;border:1px solid #ddd"><b>${esc(r.sub.name)}</b></td><td style="padding:7px;border:1px solid #ddd;text-align:center">${cv(r.t1c)}</td><td style="padding:7px;border:1px solid #ddd;text-align:center">${cv(r.t1f)}</td><td style="padding:7px;border:1px solid #ddd;text-align:center">${cv(r.t2c)}</td><td style="padding:7px;border:1px solid #ddd;text-align:center">${cv(r.t2f)}</td><td style="padding:7px;border:1px solid #ddd;text-align:center"><b>${r.ov!==null?faD(r.ov):"—"}</b></td><td style="padding:7px;border:1px solid #ddd;text-align:center;color:${r.ov>=10?"#2FBF8A":"#EF5B64"}">${r.ov!==null?(r.ov>=10?"قبول":"تکرار"):"—"}</td></tr>`).join("")}</tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:13px;background:#f2f5fb;border:1px solid #dde;border-radius:10px;padding:10px 14px">
+      <span>رتبه در کلاس: <b>${rc?faD(rc.rank)+" از "+faD(rc.total):"—"}</b></span>
+      <span>رتبه در مدرسه: <b>${rs?faD(rs.rank)+" از "+faD(rs.total):"—"}</b></span>
+      <span>جنم: <b>${faD(bal>0?"+"+bal:bal)}</b></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:44px;font-size:12px;color:#556">
+      <span>امضای مدیر مدرسه: ………………………</span><span>مهر و امضای نائب‌مدیر: ………………………</span>
+    </div>
+  </div>`;
+  setTimeout(()=>window.print(),120);
+}
+
+/* ================= ADMIN PANEL ================= */
+const AdminLinks = [
+  {id:"dash", t:"داشبورد مدیریتی", icon:"layout-dashboard"},
+  {id:"students", t:"مدیریت دانش‌آموزان", icon:"users"},
+  {id:"regs", t:"مدیریت ثبت‌نام‌ها", icon:"user-check"},
+  {id:"classes", t:"مدیریت کلاس‌ها", icon:"school"},
+  {id:"grades", t:"مدیریت نمرات", icon:"notebook-pen"},
+  {id:"subjects", t:"مدیریت دروس", icon:"book-marked"},
+  {id:"exams", t:"مدیریت امتحانات", icon:"calendar-clock"},
+  {id:"news", t:"مدیریت اطلاعیه‌ها", icon:"megaphone"},
+  {id:"honors", t:"مدیریت افتخارات", icon:"trophy"},
+  {id:"merits", t:"مدیریت جنم", icon:"zap"},
+  {id:"ranks", t:"رتبه‌بندی", icon:"line-chart"},
+  {id:"bases", t:"قرارگاه‌ها", icon:"castle"},
+  {id:"reports", t:"گزارش‌های آموزشی", icon:"bar-chart-3"},
+  {id:"logs", t:"تاریخچه فعالیت", icon:"history"},
+  {id:"settings", t:"تنظیمات سامانه", icon:"settings"}
+];
+const AdminView = {
+html(p){
+  const me=Auth.me(); if(!me) return "";
+  const sub=AdminLinks.some(l=>l.id===p)?p:"dash";
+  const F=AdminSubs[sub]||AdminSubs.dash;
+  const pend=db.students.filter(s=>s.status==="pending").length;
+  const userCard=`<div class="card card-p mt16" style="padding:14px;background:linear-gradient(135deg,rgba(245,180,0,.12),var(--card2))">
+    <div class="flex"><span class="avatar" style="background:linear-gradient(135deg,#F5B400,#F08A5D)"><i data-lucide="shield" style="width:18px;height:18px"></i></span><div><b style="font-size:14px">مدیر سامانه</b><div class="tiny muted">دسترسی کامل — ${esc(me.u.username)}</div></div></div></div>`;
+  const links=AdminLinks.map(l=>({...l, cnt:l.id==="regs"?pend:0}));
+  return panelShell({base:"admin", sub, links, userCard, content:F.html(me), title:F.title, icon:F.icon, piCls:F.piCls});
+},
+mount(p){ const me=Auth.me(); const sub=AdminLinks.some(l=>l.id===p)?p:"dash"; const F=AdminSubs[sub]; if(F&&F.mount) F.mount(me); }
+};
+function refreshAdmin(){ render(); }
+
+const AdminSubs = {
+/* ---------- داشبورد ---------- */
+dash:{
+  title:"داشبورد مدیریتی", icon:"layout-dashboard", piCls:"ic-gold",
+  html(){
+    const pend=db.students.filter(s=>s.status==="pending").length;
+    const rk=schoolRanking();
+    const avg=rk.length?ROUND2(rk.reduce((a,x)=>a+x.gpa,0)/rk.length):0;
+    const totalMerit=db.merits.reduce((a,m)=>a+m.delta,0);
+    const upExams=db.exams.filter(e=>examStatus(e).state==="up").length;
+    return `<div class="grid g4">
+      <div class="card kpi"><div class="ic ic-blue"><i data-lucide="users"></i></div><div class="num" data-count="${approvedStudents().length}">۰</div><div class="lbl">دانش‌آموز فعال</div></div>
+      <div class="card kpi"><div class="ic ic-gold"><i data-lucide="user-clock"></i></div><div class="num" data-count="${pend}">۰</div><div class="lbl">ثبت‌نام در انتظار</div></div>
+      <div class="card kpi"><div class="ic ic-green"><i data-lucide="star"></i></div><div class="num" data-count="${avg}" data-dec="1">۰</div><div class="lbl">میانگین معدل مدرسه</div></div>
+      <div class="card kpi"><div class="ic ${totalMerit>=0?"ic-orange":"ic-red"}"><i data-lucide="zap"></i></div><div class="num" style="color:${totalMerit>=0?"var(--orange)":"var(--red)"}">${faD(totalMerit>0?"+"+totalMerit:totalMerit)}</div><div class="lbl">مجموع جنم ثبت‌شده</div></div>
+    </div>
+    <div class="grid mt24" style="grid-template-columns:1.3fr .7fr">
+      <div class="card card-p"><div class="between"><h3 class="h-md flex"><i data-lucide="bar-chart-3" style="color:var(--blue-xl)"></i>وضعیت کلاس‌ها</h3><span class="tiny muted">تعداد دانش‌آموز در برابر میانگین معدل</span></div>
+        <div style="position:relative;height:280px" class="mt16"><canvas id="chAdmBar"></canvas></div></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="pie-chart" style="color:var(--orange)"></i>توزیع نمرات</h3>
+        <div style="position:relative;height:280px" class="mt16"><canvas id="chAdmPie"></canvas></div></div>
+    </div>
+    <div class="grid mt24 g2">
+      <div class="card card-p"><div class="between"><h3 class="h-md flex"><i data-lucide="user-clock" style="color:var(--gold)"></i>ثبت‌نام‌های در انتظار</h3>
+        <button class="btn btn-ghost btn-sm" onclick="go('admin/regs')">مدیریت همه</button></div>
+        <div class="grid mt16" style="gap:10px">
+          ${db.students.filter(s=>s.status==="pending").slice(0,4).map(s=>`<div class="mini-row">
+            <span class="avatar">${esc(s.firstName[0])}</span>
+            <div style="flex:1"><b class="small">${esc(stuFull(s))}</b><div class="tiny muted">${faD(s.studentId)} — کلاس ${clsName(s.classId)} — ${timeAgo(s.createdAt)}</div></div>
+            <button class="btn btn-success btn-sm" onclick="setStatus('${s.id}','approved')"><i data-lucide="check"></i>تأیید</button>
+            <button class="btn btn-danger btn-sm" onclick="setStatus('${s.id}','rejected')"><i data-lucide="x"></i>رد</button></div>`).join("")||`<div class="empty" style="padding:22px"><i data-lucide="check-circle-2"></i>موردی در انتظار نیست.</div>`}
+        </div></div>
+      <div class="card card-p"><div class="between"><h3 class="h-md flex"><i data-lucide="history" style="color:var(--violet)"></i>آخرین فعالیت‌ها</h3>
+        <button class="btn btn-ghost btn-sm" onclick="go('admin/logs')">تاریخچه کامل</button></div>
+        <div class="timeline mt16">${db.logs.slice(0,6).map((l,i)=>`<div class="tl-item ${i%3===1?"gold":i%3===2?"green":""}"><b class="small">${esc(l.action)}</b><div class="tiny muted">${esc(l.detail||"")} — ${l.actor}، ${timeAgo(l.at)}</div></div>`).join("")}</div></div>
+    </div>`;
+  },
+  mount(){
+    animateCounters();
+    const b=$("#chAdmBar"); if(b&&window.Chart){
+      Charts.make(b,{type:"bar",data:{labels:db.classes.map(c=>c.name),datasets:[
+        {label:"دانش‌آموزان",data:db.classes.map(c=>classStudents(c.id).filter(s=>s.status==="approved").length),backgroundColor:"rgba(59,107,212,.75)",borderRadius:9,maxBarThickness:44,yAxisID:"y"},
+        {label:"میانگین معدل",data:db.classes.map(c=>gpaClassAvg(c.id)??0),type:"line",borderColor:"#F5B400",backgroundColor:"#F5B400",tension:.4,pointRadius:4,yAxisID:"y1"}]},
+        options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:"rgba(140,160,200,.1)"}},y1:{min:0,max:20,position:"left",grid:{display:false}}}}});
+    }
+    const p=$("#chAdmPie"); if(p&&window.Chart){
+      const vs=db.grades.map(g=>g.value);
+      const b17=vs.filter(v=>v>=17).length, b14=vs.filter(v=>v>=14&&v<17).length, b10=vs.filter(v=>v>=10&&v<14).length, b0=vs.filter(v=>v<10).length;
+      Charts.make(p,{type:"doughnut",data:{labels:["عالی (۱۷+)","خوب (۱۴ تا ۱۷)","متوسط (۱۰ تا ۱۴)","نیاز به تلاش"],datasets:[{data:[b17,b14,b10,b0],backgroundColor:["#2FBF8A","#3B6BD4","#F5B400","#EF5B64"],borderColor:"rgba(0,0,0,0)",hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"left",labels:{boxWidth:12,padding:12}}}}});
+    }
+  }
+},
+/* ---------- دانش‌آموزان ---------- */
+students:{
+  title:"مدیریت دانش‌آموزان", icon:"users", piCls:"ic-blue",
+  html(){
+    return `<div class="card card-p">
+      <div class="between">
+        <div class="flex" style="flex-wrap:wrap">
+          <div class="in-wrap" style="min-width:230px"><i data-lucide="search"></i><input class="input" id="stSearch" placeholder="جست‌وجوی نام یا شماره دانش‌آموزی…"></div>
+          <select class="input" id="stClassFilter" style="width:auto"><option value="">همه کلاس‌ها</option>${db.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}</select>
+          <select class="input" id="stStatusFilter" style="width:auto"><option value="">همه وضعیت‌ها</option>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}">${v.t}</option>`).join("")}</select>
+        </div>
+        <button class="btn btn-primary" onclick="addStudentModal()"><i data-lucide="user-plus"></i>افزودن دانش‌آموز</button>
+      </div>
+      <div class="tbl-wrap mt16"><table class="tbl"><thead><tr><th>دانش‌آموز</th><th>شماره</th><th>کلاس</th><th>معدل</th><th>جنم</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+      <tbody id="stRows"></tbody></table></div>
+      <div class="tiny muted mt16" id="stCount"></div>
+    </div>`;
+  },
+  mount(){
+    const draw=()=>{
+      const q=($("#stSearch").value||"").trim(), cf=$("#stClassFilter").value, sf=$("#stStatusFilter").value;
+      const list=db.students.filter(s=>
+        (!cf||s.classId===cf) && (!sf||s.status===sf) &&
+        (!q||stuFull(s).includes(q)||s.studentId.includes(q)||s.studentId.includes(q.replace(/[۰-۹]/g,d=>FA_D.indexOf(d)))));
+      $("#stRows").innerHTML=list.map(s=>{
+        const g=gpaOf(s.id), bal=meritBalance(s.id);
+        return `<tr><td><div class="flex"><span class="avatar">${esc(s.firstName[0])}</span><b>${esc(stuFull(s))}</b></div></td>
+          <td class="muted">${faD(s.studentId)}</td><td><span class="chip">${clsName(s.classId)}</span></td>
+          <td>${g!==null?`<span class="score-badge ${gradeColorCls(g)}">${faD(g)}</span>`:"—"}</td>
+          <td><span style="color:${bal>=0?"var(--green)":"var(--red)"};font-weight:800">${faD(bal>0?"+"+bal:bal)}</span></td>
+          <td><span class="pill ${STATUS[s.status].c}"><span class="dot"></span>${STATUS[s.status].t}</span></td>
+          <td><div class="flex" style="gap:6px">
+            <button class="icon-btn" title="ویرایش" onclick="editStudentModal('${s.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+            ${s.status==="pending"?`<button class="icon-btn" style="color:var(--green)" title="تأیید" onclick="setStatus('${s.id}','approved')"><i data-lucide="check" style="width:15px;height:15px"></i></button>`:""}
+            ${["approved","pending","rejected"].includes(s.status)?`<button class="icon-btn" style="color:var(--gold)" title="مسدودسازی" onclick="setStatus('${s.id}','blocked')"><i data-lucide="ban" style="width:15px;height:15px"></i></button>`:`<button class="icon-btn" style="color:var(--green)" title="رفع انسداد" onclick="setStatus('${s.id}','approved')"><i data-lucide="unlock" style="width:15px;height:15px"></i></button>`}
+            <button class="icon-btn" style="color:var(--red)" title="حذف" onclick="deleteStudent('${s.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button>
+          </div></td></tr>`;
+      }).join("") || `<tr><td colspan="7"><div class="empty"><i data-lucide="search-x"></i>دانش‌آموزی یافت نشد.</div></td></tr>`;
+      $("#stCount").textContent="تعداد نتایج: "+faD(list.length)+" از "+faD(db.students.length);
+      UI.icons();
+    };
+    ["stSearch","stClassFilter","stStatusFilter"].forEach(id=>$("#"+id).addEventListener("input",draw));
+    draw();
+  }
+},
+/* ---------- ثبت‌نام‌ها ---------- */
+regs:{
+  title:"مدیریت ثبت‌نام‌ها", icon:"user-check", piCls:"ic-gold",
+  html(){
+    const pend=db.students.filter(s=>s.status==="pending");
+    const rej=db.students.filter(s=>s.status==="rejected");
+    const row=(s,kind)=>`<div class="card card-p"><div class="between">
+      <div class="flex"><span class="avatar">${esc(s.firstName[0])}</span><div><b>${esc(stuFull(s))}</b><div class="tiny muted">شماره ${faD(s.studentId)} — کلاس ${clsName(s.classId)} — ${timeAgo(s.createdAt)}</div></div></div>
+      <div class="flex">${kind==="pend"
+        ? `<button class="btn btn-success btn-sm" onclick="setStatus('${s.id}','approved')"><i data-lucide="check"></i>تأیید حساب</button>
+           <button class="btn btn-danger btn-sm" onclick="setStatus('${s.id}','rejected')"><i data-lucide="x"></i>رد</button>`
+        : `<button class="btn btn-ghost btn-sm" onclick="setStatus('${s.id}','pending')"><i data-lucide="rotate-ccw"></i>بازگشت به انتظار</button>
+           <button class="btn btn-success btn-sm" onclick="setStatus('${s.id}','approved')"><i data-lucide="check"></i>تأیید</button>`}</div></div></div>`;
+    return `<div class="tab-bar"><button class="on">در انتظار تأیید (${faD(pend.length)})</button><span style="flex:1"></span><span class="chip" style="align-self:center"><i data-lucide="info"></i>تأییدشده‌ها بلافاصله می‌توانند وارد شوند</span></div>
+      <div class="grid" style="gap:12px">${pend.map(s=>row(s,"pend")).join("")||`<div class="empty card"><i data-lucide="check-circle-2"></i><b>همه درخواست‌ها بررسی شده‌اند</b></div>`}</div>
+      ${rej.length?`<h3 class="h-md mt24 mb-1">رد شده‌ها</h3><div class="grid mt16" style="gap:12px">${rej.map(s=>row(s,"rej")).join("")}</div>`:""}`;
+  }
+},
+/* ---------- کلاس‌ها ---------- */
+classes:{
+  title:"مدیریت کلاس‌ها", icon:"school", piCls:"ic-violet",
+  html(){
+    return `<div class="grid g3">
+      ${db.classes.map(c=>{
+        const st=classStudents(c.id), ap=st.filter(s=>s.status==="approved"), avg=gpaClassAvg(c.id);
+        const bal=st.reduce((a,s)=>a+meritBalance(s.id),0);
+        return `<div class="card card-p reveal">
+          <div class="between"><div class="flex"><span class="mini-ic ic-violet" style="width:46px;height:46px;border-radius:15px"><i data-lucide="school"></i></span>
+          <div><b style="font-size:17px">کلاس ${c.name}</b><div class="tiny muted">پایه ${faD(c.grade)}</div></div></div>
+          <span class="chip">${faD(ap.length)} نفر</span></div>
+          <div class="grid g2 mt16">
+            <div class="mini-row" style="cursor:default"><div><div class="tiny muted">میانگین معدل</div><b style="color:var(--gold)">${avg!==null?faD(avg):"—"}</b></div></div>
+            <div class="mini-row" style="cursor:default"><div><div class="tiny muted">مجموع جنم</div><b style="color:${bal>=0?"var(--green)":"var(--red)"}">${faD(bal>0?"+"+bal:bal)}</b></div></div>
+          </div>
+          <div class="flex mt16"><button class="btn btn-primary btn-sm" style="flex:1" onclick="classRosterModal('${c.id}')"><i data-lucide="list"></i>فهرست دانش‌آموزان</button>
+          <button class="btn btn-ghost btn-sm" onclick="go('admin/grades')"><i data-lucide="notebook-pen"></i>نمرات</button></div>
+        </div>`;
+      }).join("")}
+    </div>`;
+  }
+}
+};
+
+/* ---------- Admin student ops ---------- */
+function setStatus(sid, st){
+  const s=stuById(sid); if(!s) return;
+  s.status=st; logActivity("مدیر","تغییر وضعیت حساب",`${stuFull(s)} → ${STATUS[st].t}`); DB.save();
+  UI.toast(`وضعیت ${stuFull(s)} به «${STATUS[st].t}» تغییر کرد.`,"ok"); render();
+}
+function editStudentModal(sid){
+  const s=stuById(sid); if(!s) return;
+  UI.promptFields("ویرایش دانش‌آموز",[
+    {key:"fn",label:"نام",value:s.firstName,req:true},
+    {key:"ln",label:"نام خانوادگی",value:s.lastName,req:true},
+    {key:"sid",label:"شماره دانش‌آموزی",value:s.studentId,req:true},
+    {key:"cls",label:"کلاس",type:"select",options:db.classes.map(c=>({v:c.id,t:c.name})),value:s.classId},
+    {key:"st",label:"وضعیت حساب",type:"select",options:Object.entries(STATUS).map(([k,v])=>({v:k,t:v.t})),value:s.status}
+  ], async out=>{
+    if(!/^\d{4,}$/.test(out.sid)){ UI.toast("شماره دانش‌آموزی نامعتبر است.","err"); return false; }
+    if(db.students.some(x=>x.id!==sid&&x.studentId===out.sid)){ UI.toast("این شماره دانش‌آموزی برای دانش‌آموز دیگری ثبت شده.","err"); return false; }
+    const changedCls=s.classId!==out.cls;
+    s.firstName=out.fn; s.lastName=out.ln; s.studentId=out.sid; s.classId=out.cls; s.status=out.st;
+    logActivity("مدیر","ویرایش دانش‌آموز",`${stuFull(s)}${changedCls?" — انتقال به کلاس "+clsName(out.cls):""}`); DB.save();
+    UI.toast("اطلاعات دانش‌آموز به‌روزرسانی شد.","ok"); render(); return true;
+  },"pencil");
+}
+function addStudentModal(){
+  UI.promptFields("افزودن دانش‌آموز جدید (تأیید فوری)",[
+    {key:"fn",label:"نام",req:true},{key:"ln",label:"نام خانوادگی",req:true},
+    {key:"sid",label:"شماره دانش‌آموزی",req:true,ph:"عددی و یکتا"},
+    {key:"cls",label:"کلاس",type:"select",options:db.classes.map(c=>({v:c.id,t:c.name}))},
+    {key:"user",label:"نام کاربری",req:true,ph:"لاتین، حداقل ۴ کاراکتر"},
+    {key:"pw",label:"رمز عبور موقت",req:true,ph:"حداقل ۸ کاراکتر",hint:"به دانش‌آموز تحویل داده شود؛ قابل تغییر در تنظیمات حساب"}
+  ], async out=>{
+    if(!/^\d{4,}$/.test(out.sid)){ UI.toast("شماره دانش‌آموزی نامعتبر است.","err"); return false; }
+    if(db.students.some(x=>x.studentId===out.sid)){ UI.toast("شماره دانش‌آموزی تکراری است.","err"); return false; }
+    if(!/^[A-Za-z0-9_.]{4,}$/.test(out.user)||db.users.some(u=>u.username.toLowerCase()===out.user.toLowerCase())){ UI.toast("نام کاربری نامعتبر یا تکراری است.","err"); return false; }
+    if(out.pw.length<8){ UI.toast("رمز باید حداقل ۸ کاراکتر باشد.","err"); return false; }
+    const salt=uid();
+    const u={id:"u_"+uid(),role:"student",username:out.user,salt,hash:await hashPW(out.pw,salt),mustChange:false,createdAt:Date.now()};
+    db.users.push(u);
+    db.students.push({id:"st_"+uid(),userId:u.id,firstName:out.fn,lastName:out.ln,studentId:out.sid,classId:out.cls,status:"approved",createdAt:Date.now()});
+    logActivity("مدیر","افزودن مستقیم دانش‌آموز",`${out.fn} ${out.ln} — کلاس ${clsName(out.cls)}`); DB.save();
+    UI.toast("دانش‌آموز اضافه و فعال شد.","ok"); render(); return true;
+  },"user-plus");
+}
+function deleteStudent(sid){
+  const s=stuById(sid); if(!s) return;
+  UI.confirm(`دانش‌آموز «${stuFull(s)}» به همراه همه نمرات و تراکنش‌های جنم حذف می‌شود. قطعی است؟`, ()=>{
+    db.students=db.students.filter(x=>x.id!==sid);
+    db.grades=db.grades.filter(g=>g.studentId!==sid);
+    db.merits=db.merits.filter(m=>m.studentId!==sid);
+    if(s.userId) db.users=db.users.filter(u=>u.id!==s.userId);
+    logActivity("مدیر","حذف دانش‌آموز",stuFull(s)); DB.save();
+    UI.toast("دانش‌آموز حذف شد.","ok"); render();
+  },"حذف دائمی");
+}
+function classRosterModal(cid){
+  const st=classStudents(cid);
+  UI.modal({title:"فهرست کلاس "+clsName(cid), icon:"school", wide:true, body:`
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>دانش‌آموز</th><th>شماره</th><th>معدل</th><th>جنم</th><th>وضعیت</th><th>انتقال به</th></tr></thead><tbody>
+    ${st.map(s=>{const g=gpaOf(s.id),bal=meritBalance(s.id);return `<tr>
+      <td><div class="flex"><span class="avatar">${esc(s.firstName[0])}</span><b>${esc(stuFull(s))}</b></div></td>
+      <td class="muted">${faD(s.studentId)}</td>
+      <td>${g!==null?`<span class="score-badge ${gradeColorCls(g)}">${faD(g)}</span>`:"—"}</td>
+      <td style="color:${bal>=0?"var(--green)":"var(--red)"};font-weight:800">${faD(bal>0?"+"+bal:bal)}</td>
+      <td><span class="pill ${STATUS[s.status].c}"><span class="dot"></span>${STATUS[s.status].t}</span></td>
+      <td><select class="input" style="padding:6px 10px;width:auto;font-size:12px" onchange="moveClass('${s.id}',this.value)">
+        ${db.classes.map(c=>`<option value="${c.id}" ${c.id===cid?"selected":""}>${c.name}</option>`).join("")}</select></td></tr>`;}).join("")||`<tr><td colspan="6"><div class="empty"><i data-lucide="users"></i>دانش‌آموزی در این کلاس نیست.</div></td></tr>`}
+    </tbody></table></div>
+    <div class="flex mt16"><button class="btn btn-primary btn-sm" onclick="UI.closeModal();addStudentModal()"><i data-lucide="user-plus"></i>افزودن دانش‌آموز به این کلاس</button></div>`});
+}
+function moveClass(sid,cid){
+  const s=stuById(sid); if(!s) return;
+  const old=clsName(s.classId); s.classId=cid;
+  logActivity("مدیر","تغییر کلاس",`${stuFull(s)}: ${old} → ${clsName(cid)}`); DB.save();
+  UI.toast(`${stuFull(s)} به کلاس ${clsName(cid)} منتقل شد.`,"ok"); UI.closeModal(); render();
+}
+
+Object.assign(AdminSubs, {
+/* ---------- نمرات ---------- */
+grades:{
+  title:"مدیریت نمرات", icon:"notebook-pen", piCls:"ic-blue",
+  state:{cid:"c81"},
+  html(){
+    const st=this.state;
+    return `<div class="card card-p">
+      <div class="between">
+        <div class="flex" style="flex-wrap:wrap">
+          <select class="input" id="grClass" style="width:auto">${db.classes.map(c=>`<option value="${c.id}" ${st.cid===c.id?"selected":""}>${c.name}</option>`).join("")}</select>
+          <select class="input" id="grSub" style="width:auto"><option value="">همه دروس</option>${db.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select>
+          <div class="in-wrap" style="min-width:210px"><i data-lucide="search"></i><input class="input" id="grSearch" placeholder="نام دانش‌آموز…"></div>
+        </div>
+        <button class="btn btn-accent" onclick="gradeSheetModal()"><i data-lucide="table-properties"></i>ثبت دسته‌ای نمرات</button>
+      </div>
+      <div class="tbl-wrap mt16"><table class="tbl"><thead><tr><th>دانش‌آموز</th><th>درس</th><th>ترم/نوع</th><th>نمره</th><th>تاریخ امتحان</th><th>آخرین تغییر</th><th>تاریخچه</th><th>عملیات</th></tr></thead><tbody id="grRows"></tbody></table></div>
+    </div>`;
+  },
+  mount(){
+    const draw=()=>{
+      const cid=$("#grClass").value, sub=$("#grSub").value, q=($("#grSearch").value||"").trim();
+      AdminSubs.grades.state.cid=cid;
+      const rows=db.grades.filter(g=>{
+        const s=stuById(g.studentId); if(!s||s.classId!==cid) return false;
+        if(sub&&g.subjectId!==sub) return false;
+        if(q&&!stuFull(s).includes(q)) return false;
+        return true;
+      }).sort((a,b)=>b.updatedAt-a.updatedAt);
+      $("#grRows").innerHTML=rows.map(g=>{
+        const s=stuById(g.studentId);
+        return `<tr><td><div class="flex"><span class="avatar" style="width:32px;height:32px;font-size:12px">${esc(s.firstName[0])}</span><b class="small">${esc(stuFull(s))}</b></div></td>
+        <td class="small"><div class="flex"><i data-lucide="${subIcon(g.subjectId)}" style="width:15px;height:15px;color:var(--blue-xl)"></i>${esc(subName(g.subjectId))}</div></td>
+        <td><span class="chip">ترم ${faD(g.term)}</span> <span class="tiny muted">${esc(g.type)}</span></td>
+        <td><span class="score-badge ${gradeColorCls(g.value)}">${faD(g.value)}</span></td>
+        <td class="tiny muted">${fmtJ(g.jdate)}</td>
+        <td class="tiny muted">${timeAgo(g.updatedAt)}<br>توسط ${esc(g.updatedBy)}</td>
+        <td><button class="btn btn-ghost btn-xs" onclick="gradeHistoryModal('${g.id}')"><i data-lucide="history"></i>${faD((g.history||[]).length)} تغییر</button></td>
+        <td><div class="flex" style="gap:6px">
+          <button class="icon-btn" onclick="editGradeModal('${g.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+          <button class="icon-btn" style="color:var(--red)" onclick="deleteGrade('${g.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button>
+        </div></td></tr>`;
+      }).join("")||`<tr><td colspan="8"><div class="empty"><i data-lucide="inbox"></i>نمره‌ای مطابق فیلترها نیست — با «ثبت دسته‌ای» شروع کنید.</div></td></tr>`;
+      UI.icons();
+    };
+    ["grClass","grSub","grSearch"].forEach(id=>$("#"+id).addEventListener("input",draw));
+    draw();
+  }
+},
+/* ---------- دروس ---------- */
+subjects:{
+  title:"مدیریت دروس", icon:"book-marked", piCls:"ic-green",
+  html(){
+    return `<div class="between mb-1"><span class="chip"><i data-lucide="info"></i>حذف درس، نمرات مرتبط را هم حذف می‌کند</span>
+      <button class="btn btn-primary" onclick="editSubjectModal(null)"><i data-lucide="plus"></i>درس جدید</button></div>
+    <div class="grid g4 mt16">
+      ${db.subjects.map(s=>{const cnt=db.grades.filter(g=>g.subjectId===s.id).length;
+        return `<div class="card card-p"><div class="flex"><span class="mini-ic ic-green"><i data-lucide="${s.icon}"></i></span><div style="flex:1"><b>${esc(s.name)}</b><div class="tiny muted">${faD(cnt)} نمره ثبت‌شده</div></div>
+        <button class="icon-btn" onclick="editSubjectModal('${s.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+        <button class="icon-btn" style="color:var(--red)" onclick="deleteSubject('${s.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button></div></div>`;
+      }).join("")}
+    </div>`;
+  }
+},
+/* ---------- امتحانات ---------- */
+exams:{
+  title:"مدیریت امتحانات", icon:"calendar-clock", piCls:"ic-red",
+  html(){
+    const list=db.exams.map(e=>({e,st:examStatus(e)})).sort((a,b)=>(a.e.jmonth*100+a.e.jday)-(b.e.jmonth*100+b.e.jday));
+    return `<div class="between mb-1"><span class="chip"><i data-lucide="calendar"></i>${faD(db.exams.length)} امتحان ثبت‌شده</span>
+      <button class="btn btn-primary" onclick="editExamModal(null)"><i data-lucide="plus"></i>ثبت امتحان جدید</button></div>
+    <div class="grid mt16" style="gap:12px">
+      ${list.map(({e,st})=>`<div class="exam-row">
+        <div class="exam-date"><b>${faD(e.jday)}</b><span>${J_MONTHS[e.jmonth-1]}</span></div>
+        <div style="flex:1;min-width:0"><b>${esc(e.title)}</b><div class="tiny muted">${e.subjectId?esc(subName(e.subjectId))+" — ":""}${e.classId==="all"?"همه پایه‌ها":"کلاس "+clsName(e.classId)}${e.jyear?" — "+faD(e.jyear):""}</div></div>
+        <span class="pill ${st.state==="up"?"p-green":"p-gray"}"><span class="dot"></span>${st.state==="up"?(st.days===0?"امروز":faD(st.days)+" روز مانده"):"برگزار شد"}</span>
+        <div class="flex" style="gap:6px">
+          <button class="icon-btn" onclick="editExamModal('${e.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+          <button class="icon-btn" style="color:var(--red)" onclick="deleteExam('${e.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button>
+        </div></div>`).join("")}
+    </div>`;
+  }
+},
+/* ---------- اطلاعیه‌ها ---------- */
+news:{
+  title:"مدیریت اطلاعیه‌ها", icon:"megaphone", piCls:"ic-gold",
+  html(){
+    const list=db.announcements.slice().sort((a,b)=>b.createdAt-a.createdAt);
+    return `<div class="between mb-1"><span class="chip"><i data-lucide="bell"></i>${faD(list.filter(a=>a.published).length)} منتشرشده از ${faD(list.length)}</span>
+      <button class="btn btn-primary" onclick="editAnnouncementModal(null)"><i data-lucide="plus"></i>اطلاعیه جدید</button></div>
+    <div class="grid mt16" style="gap:12px">
+      ${list.map(a=>`<div class="card card-p"><div class="between">
+        <div class="flex" style="min-width:0"><span class="mini-ic ${a.published?"ic-gold":"ic-red"}"><i data-lucide="${a.published?"bell":"bell-off"}"></i></span>
+        <div style="min-width:0"><b>${esc(a.title)}</b><div class="tiny muted">${esc(a.category)} — ${fmtDateTime(a.createdAt)}</div></div></div>
+        <div class="flex">
+          <button class="switch ${a.published?"on":""}" title="وضعیت انتشار" onclick="toggleAnnounce('${a.id}')"></button>
+          <button class="icon-btn" onclick="editAnnouncementModal('${a.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+          <button class="icon-btn" style="color:var(--red)" onclick="deleteAnnouncement('${a.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button>
+        </div></div></div>`).join("")}
+    </div>`;
+  }
+}
+});
+
+/* ---------- GRADE OPS ---------- */
+function gradeSheetModal(){
+  const j=todayJ();
+  const cid0=AdminSubs.grades.state.cid||db.classes[0].id;
+  UI.modal({title:"ثبت دسته‌ای نمرات", icon:"table-properties", wide:true, body:`
+    <div class="grid g3">
+      <div class="field"><label>کلاس</label><select class="input" id="gs_cls">${db.classes.map(c=>`<option value="${c.id}" ${c.id===cid0?"selected":""}>${c.name}</option>`).join("")}</select></div>
+      <div class="field"><label>درس</label><select class="input" id="gs_sub">${db.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select></div>
+      <div class="field"><label>ترم و نوع</label><div class="flex"><select class="input" id="gs_term"><option value="1">ترم ۱</option><option value="2">ترم ۲</option></select>
+      <select class="input" id="gs_type"><option>مستمر</option><option>پایانی</option></select></div></div>
+    </div>
+    <div class="field"><label>تاریخ امتحان (شمسی)</label><div class="flex"><input class="input" id="gs_d" type="number" min="1" max="31" value="${j[2]}" style="width:80px"><select class="input" id="gs_m">${J_MONTHS.map((m,i)=>`<option value="${i+1}" ${i+1===j[1]?"selected":""}>${m}</option>`).join("")}</select><input class="input" id="gs_y" type="number" value="${j[0]}" style="width:100px"></div></div>
+    <div id="gs_rows"></div>
+    <div class="hint mt8">خانه‌های خالی ذخیره نمی‌شوند؛ نمره باید بین ۰ تا ۲۰ باشد (اعشار تا ۰٫۲۵).</div>`,
+    actions:[
+      {label:"ذخیره همه نمرات", cls:"btn-primary", icon:"save", keepOpen:true, onClick:()=>saveGradeSheet()},
+      {label:"انصراف", cls:"btn-ghost"}
+    ],
+    onMount(box){
+      const draw=()=>{
+        const cid=$("#gs_cls").value, sub=$("#gs_sub").value, term=+$("#gs_term").value, type=$("#gs_type").value;
+        const studs=classStudents(cid).filter(s=>s.status==="approved");
+        $("#gs_rows").innerHTML=`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>دانش‌آموز</th><th>شماره</th><th>نمره (۰ تا ۲۰)</th><th>وضعیت فعلی</th></tr></thead><tbody>
+          ${studs.map(s=>{const ex=db.grades.find(g=>g.studentId===s.id&&g.subjectId===sub&&g.term===term&&g.type===type);
+            return `<tr><td><b class="small">${esc(stuFull(s))}</b></td><td class="tiny muted">${faD(s.studentId)}</td>
+            <td><input class="input gs-in" data-sid="${s.id}" type="number" min="0" max="20" step="0.25" value="${ex?ex.value:""}" placeholder="—" style="width:110px"></td>
+            <td>${ex?`<span class="pill p-blue"><span class="dot"></span>ویرایش نمره موجود</span>`:`<span class="pill p-gray"><span class="dot"></span>جدید</span>`}</td></tr>`;}).join("")||`<tr><td colspan="4"><div class="empty"><i data-lucide="users"></i>دانش‌آموز فعالی در این کلاس نیست.</div></td></tr>`}</tbody></table></div>`;
+        UI.icons();
+      };
+      ["gs_cls","gs_sub","gs_term","gs_type"].forEach(id=>box.querySelector("#"+id).addEventListener("input",draw));
+      draw();
+    }});
+}
+async function saveGradeSheet(){
+  const sub=$("#gs_sub").value, term=+$("#gs_term").value, type=$("#gs_type").value;
+  const jd=[clamp(+$("#gs_y").value||todayJ()[0],1300,1500), clamp(+$("#gs_m").value||1,1,12), clamp(+$("#gs_d").value||1,1,31)];
+  let saved=0, errs=0;
+  $$(".gs-in").forEach(inEl=>{
+    const v=inEl.value.trim(); if(v==="") return;
+    const num=Math.round(parseFloat(v)*4)/4;
+    if(isNaN(num)||num<0||num>20){ inEl.classList.add("err"); errs++; return; }
+    inEl.classList.remove("err");
+    const ex=db.grades.find(g=>g.studentId===inEl.dataset.sid&&g.subjectId===sub&&g.term===term&&g.type===type);
+    if(ex){
+      if(ex.value!==num){ (ex.history=ex.history||[]).push({at:Date.now(),by:"مدیر سامانه",from:ex.value,to:num}); }
+      ex.value=num; ex.jdate=jd; ex.updatedAt=Date.now(); ex.updatedBy="مدیر سامانه"; ex.status="approved";
+    } else {
+      db.grades.push({id:"g_"+uid(),studentId:inEl.dataset.sid,subjectId:sub,value:num,term,type,jdate:jd,note:"",status:"approved",updatedAt:Date.now(),updatedBy:"مدیر سامانه",history:[{at:Date.now(),by:"مدیر سامانه",from:null,to:num}]});
+    }
+    saved++;
+  });
+  if(errs){ UI.toast(faD(errs)+" نمره نامعتبر بود و ذخیره نشد.","err"); return; }
+  if(!saved){ UI.toast("هیچ نمره‌ای وارد نشده است.","err"); return; }
+  logActivity("مدیر","ثبت دسته‌ای نمرات",`${faD(saved)} نمره — ${subName(sub)}، ترم ${faD(term)} (${type})`);
+  DB.save(); UI.closeModal(); UI.toast(faD(saved)+" نمره با موفقیت ثبت/به‌روز شد.","ok"); render();
+}
+function editGradeModal(gid){
+  const g=db.grades.find(x=>x.id===gid); if(!g) return;
+  const s=stuById(g.studentId);
+  UI.promptFields("ویرایش نمره — "+(s?stuFull(s):""),[
+    {key:"val",label:"نمره (۰ تا ۲۰)",type:"number",value:g.value,min:0,max:20,step:"0.25",req:true},
+    {key:"term",label:"ترم",type:"select",options:[{v:1,t:"ترم ۱"},{v:2,t:"ترم ۲"}],value:g.term},
+    {key:"type",label:"نوع نمره",type:"select",options:[{v:"مستمر",t:"مستمر"},{v:"پایانی",t:"پایانی"}],value:g.type},
+    {key:"note",label:"توضیحات",value:g.note||""}
+  ], out=>{
+    const num=Math.round(parseFloat(out.val)*4)/4;
+    if(isNaN(num)||num<0||num>20){ UI.toast("نمره باید عددی بین ۰ تا ۲۰ باشد.","err"); return false; }
+    if(g.value!==num){ (g.history=g.history||[]).push({at:Date.now(),by:"مدیر سامانه",from:g.value,to:num}); }
+    g.value=num; g.term=+out.term; g.type=out.type; g.note=out.note;
+    g.updatedAt=Date.now(); g.updatedBy="مدیر سامانه";
+    logActivity("مدیر","ویرایش نمره",`${s?stuFull(s):""} — ${subName(g.subjectId)}: ${faD(num)}`); DB.save();
+    UI.toast("نمره ویرایش شد.","ok"); render(); return true;
+  },"pencil");
+}
+function deleteGrade(gid){
+  const g=db.grades.find(x=>x.id===gid); if(!g) return;
+  const s=stuById(g.studentId);
+  UI.confirm(`نمره ${faD(g.value)} درس ${subName(g.subjectId)} برای «${s?stuFull(s):""}» حذف شود؟`, ()=>{
+    db.grades=db.grades.filter(x=>x.id!==gid);
+    logActivity("مدیر","حذف نمره",`${s?stuFull(s):""} — ${subName(g.subjectId)} (${faD(g.value)})`); DB.save();
+    UI.toast("نمره حذف شد.","ok"); render();
+  });
+}
+function gradeHistoryModal(gid){
+  const g=db.grades.find(x=>x.id===gid); if(!g) return;
+  const s=stuById(g.studentId);
+  const h=(g.history||[]).slice().reverse();
+  UI.modal({title:"تاریخچه تغییر نمره", icon:"history", body:`
+    <div class="flex mb-1 muted small">${s?esc(stuFull(s)):""} — ${esc(subName(g.subjectId))}، ترم ${faD(g.term)} (${esc(g.type)})</div>
+    <div class="timeline mt16">${h.map(x=>`<div class="tl-item ${x.from===null?"green":""}">
+      <b class="small">${x.from===null?"ثبت اولیه":"تغییر از "+faD(x.from)+" به "+faD(x.to)}</b>
+      <div class="tiny muted">${fmtDateTime(x.at)} — ${esc(x.by)}</div></div>`).join("")||`<div class="empty" style="padding:20px"><i data-lucide="inbox"></i>تغییری ثبت نشده.</div>`}</div>
+    <div class="hint">وضعیت کنونی: <b>${faD(g.value)}</b> — آخرین تغییر: ${fmtDateTime(g.updatedAt)} توسط ${esc(g.updatedBy)}</div>`});
+}
+
+/* ---------- SUBJECT OPS ---------- */
+const SUB_ICONS=["book-open","moon-star","pen-line","languages","globe","sigma","flask-conical","landmark","palette","dumbbell","cpu","brain","music","calculator","atoms","map"];
+function editSubjectModal(sid){
+  const s=sid?db.subjects.find(x=>x.id===sid):null;
+  UI.promptFields(s?"ویرایش درس":"درس جدید",[
+    {key:"name",label:"نام درس",value:s?s.name:"",req:true},
+    {key:"icon",label:"آیکون",type:"select",options:SUB_ICONS.map(i=>({v:i,t:i})),value:s?s.icon:"book-open"}
+  ], out=>{
+    if(s){ s.name=out.name; s.icon=out.icon; }
+    else db.subjects.push({id:"s_"+uid(),name:out.name,icon:out.icon});
+    logActivity("مدیر",s?"ویرایش درس":"افزودن درس",out.name); DB.save();
+    UI.toast("درس ذخیره شد.","ok"); render(); return true;
+  });
+}
+function deleteSubject(sid){
+  const s=db.subjects.find(x=>x.id===sid); if(!s) return;
+  const cnt=db.grades.filter(g=>g.subjectId===sid).length;
+  UI.confirm(`درس «${s.name}» به همراه ${faD(cnt)} نمره مرتبط حذف می‌شود. ادامه می‌دهید؟`, ()=>{
+    db.subjects=db.subjects.filter(x=>x.id!==sid);
+    db.grades=db.grades.filter(g=>g.subjectId!==sid);
+    logActivity("مدیر","حذف درس",s.name); DB.save(); UI.toast("درس حذف شد.","ok"); render();
+  });
+}
+
+/* ---------- EXAM OPS ---------- */
+function editExamModal(eid){
+  const e=eid?db.exams.find(x=>x.id===eid):null;
+  const j=todayJ();
+  UI.promptFields(e?"ویرایش امتحان":"ثبت امتحان جدید",[
+    {key:"title",label:"عنوان امتحان",value:e?e.title:"",req:true,ph:"مثلاً: میان‌ترم ریاضی"},
+    {key:"sub",label:"درس",type:"select",options:[{v:"",t:"— بدون درس مشخص (عمومی) —"},...db.subjects.map(s=>({v:s.id,t:s.name}))],value:e?(e.subjectId||""):""},
+    {key:"cls",label:"کلاس",type:"select",options:[{v:"all",t:"همه پایه‌ها"},...db.classes.map(c=>({v:c.id,t:c.name}))],value:e?e.classId:"all"},
+    {key:"day",label:"روز (شمسی)",type:"number",value:e?e.jday:j[2],min:1,max:31,req:true},
+    {key:"month",label:"ماه",type:"select",options:J_MONTHS.map((m,i)=>({v:i+1,t:m})),value:e?e.jmonth:j[1]},
+    {key:"year",label:"سال (اختیاری — برای امتحان مبتکران خالی بگذارید)",type:"number",value:e&&e.jyear?e.jyear:"",ph:"مثلاً ۱۴۰۴"},
+    {key:"desc",label:"توضیحات",type:"textarea",value:e?e.desc:""}
+  ], out=>{
+    const d=clamp(+out.day,1,31), m=clamp(+out.month,1,12), y=out.year?clamp(+out.year,1300,1500):null;
+    if(e){ Object.assign(e,{title:out.title,subjectId:out.sub||null,classId:out.cls,jday:d,jmonth:m,jyear:y,desc:out.desc}); }
+    else db.exams.push({id:"e_"+uid(),title:out.title,subjectId:out.sub||null,classId:out.cls,jday:d,jmonth:m,jyear:y,desc:out.desc,createdAt:Date.now()});
+    logActivity("مدیر",e?"ویرایش امتحان":"ثبت امتحان",`${out.title} — ${faD(d)} ${J_MONTHS[m-1]}`); DB.save();
+    UI.toast("امتحان ذخیره شد.","ok"); render(); return true;
+  },"calendar-plus");
+}
+function deleteExam(eid){
+  const e=db.exams.find(x=>x.id===eid); if(!e) return;
+  UI.confirm(`امتحان «${e.title}» حذف شود؟`, ()=>{
+    db.exams=db.exams.filter(x=>x.id!==eid);
+    logActivity("مدیر","حذف امتحان",e.title); DB.save(); UI.toast("امتحان حذف شد.","ok"); render();
+  });
+}
+
+/* ---------- ANNOUNCEMENT OPS ---------- */
+function editAnnouncementModal(aid){
+  const a=aid?db.announcements.find(x=>x.id===aid):null;
+  UI.promptFields(a?"ویرایش اطلاعیه":"اطلاعیه جدید",[
+    {key:"title",label:"عنوان",value:a?a.title:"",req:true},
+    {key:"cat",label:"دسته‌بندی",type:"select",options:["عمومی","امتحانات","افتخارات","پرورشی","اداری"].map(c=>({v:c,t:c})),value:a?a.category:"عمومی"},
+    {key:"body",label:"متن اطلاعیه",type:"textarea",value:a?a.body:"",req:true},
+    {key:"img",label:"آدرس تصویر (اختیاری)",value:a&&a.img?a.img:"",ph:"https://…",cls:"ltr"},
+    {key:"pub",label:"وضعیت انتشار",type:"select",options:[{v:"1",t:"منتشر شود"},{v:"0",t:"پیش‌نویس"}],value:a?(a.published?"1":"0"):"1"}
+  ], out=>{
+    const obj={title:out.title,category:out.cat,body:out.body,img:out.img||null,published:out.pub==="1"};
+    if(a) Object.assign(a,obj);
+    else db.announcements.unshift({id:"a_"+uid(),...obj,createdAt:Date.now()});
+    logActivity("مدیر",a?"ویرایش اطلاعیه":"انتشار اطلاعیه",out.title); DB.save();
+    UI.toast("اطلاعیه ذخیره شد.","ok"); render(); return true;
+  },"megaphone");
+}
+function toggleAnnounce(aid){
+  const a=db.announcements.find(x=>x.id===aid); if(!a) return;
+  a.published=!a.published;
+  logActivity("مدیر",a.published?"انتشار اطلاعیه":"برداشتن از انتشار",a.title); DB.save(); render();
+}
+function deleteAnnouncement(aid){
+  const a=db.announcements.find(x=>x.id===aid); if(!a) return;
+  UI.confirm(`اطلاعیه «${a.title}» حذف شود؟`, ()=>{
+    db.announcements=db.announcements.filter(x=>x.id!==aid);
+    logActivity("مدیر","حذف اطلاعیه",a.title); DB.save(); UI.toast("اطلاعیه حذف شد.","ok"); render();
+  });
+}
+
+Object.assign(AdminSubs, {
+/* ---------- افتخارات ---------- */
+honors:{
+  title:"مدیریت افتخارات", icon:"trophy", piCls:"ic-gold",
+  html(){
+    const med={gold:["طلا","m1"],silver:["نقره","m2"],bronze:["برنز","m3"]};
+    return `<div class="between mb-1"><div class="flex">${["علمی","فرهنگی","انضباطی"].map(t=>`<span class="chip">${t}: ${faD(db.achievements.filter(a=>a.type===t).length)}</span>`).join("")}</div>
+      <button class="btn btn-gold" onclick="editAchievementModal(null)"><i data-lucide="plus"></i>ثبت افتخار جدید</button></div>
+    <div class="grid g2 mt16">
+      ${db.achievements.map(a=>{const st=a.studentId?stuById(a.studentId):null;return `<div class="card card-p">
+        <div class="between"><div class="flex"><span class="medal ${med[a.medal][1]}" style="width:46px;height:46px"><i data-lucide="medal"></i></span>
+        <div><b>${esc(a.title)}</b><div class="tiny muted">${st?esc(stuFull(st)):"تیم مدرسه"} — مدال ${med[a.medal][0]} — ${esc(a.type)}</div></div></div>
+        <div class="flex" style="gap:6px"><button class="icon-btn" onclick="editAchievementModal('${a.id}')"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+        <button class="icon-btn" style="color:var(--red)" onclick="deleteAchievement('${a.id}')"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button></div></div>
+        ${a.desc?`<p class="muted small mt8">${esc(a.desc)}</p>`:""}
+        <div class="tiny muted mt8">${fmtJ(a.jdate)}</div></div>`;}).join("")}
+    </div>`;
+  }
+},
+/* ---------- جنم ---------- */
+merits:{
+  title:"مدیریت جنم", icon:"zap", piCls:"ic-orange",
+  html(){
+    const latest=db.merits.slice().sort((a,b)=>b.at-a.at).slice(0,12);
+    return `<div class="grid" style="grid-template-columns:.95fr 1.05fr">
+      <div class="grid" style="gap:16px;align-content:start">
+        <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="plus-circle" style="color:var(--orange)"></i>ثبت تراکنش جنم</h3>
+          <div class="grid g2 mt16">
+            <div class="field"><label>کلاس</label><select class="input" id="mr_cls">${db.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}</select></div>
+            <div class="field"><label>دانش‌آموز</label><select class="input" id="mr_stu"></select></div>
+          </div>
+          <div class="field"><label>قوانین سریع کسر</label>
+            <div class="flex" style="flex-wrap:wrap">${MERIT_RULES.map((r,i)=>`<button type="button" class="btn btn-danger btn-sm" onclick="applyMeritRule(${i})"><i data-lucide="${r.icon}"></i>${faD(r.v)} — ${r.t}</button>`).join("")}</div></div>
+          <div class="grid g2">
+            <div class="field"><label>مقدار جنم (مثبت یا منفی)</label><input class="input" id="mr_delta" type="number" step="1" value="-2"></div>
+            <div class="field"><label>دلیل</label><input class="input" id="mr_reason" value="بی‌نظمی"></div>
+          </div>
+          <button class="btn btn-accent" onclick="submitMerit()"><i data-lucide="zap"></i>ثبت تراکنش</button>
+          <div class="hint mt8">ثبت‌کننده، زمان و دلیل به‌صورت خودکار در تاریخچه می‌نشیند.</div>
+        </div>
+        <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="crown" style="color:var(--gold)"></i>رتبه‌بندی جنم</h3>
+          <div class="grid mt16" style="gap:9px">${meritRanking().slice(0,6).map((r,i)=>`<div class="rank-row" style="padding:10px 14px">
+            <span class="tiny muted" style="width:22px">${faD(i+1)}</span>
+            <div style="flex:1"><b class="small">${esc(stuFull(r.s))}</b><div class="tiny muted">${clsName(r.s.classId)}</div></div>
+            <span class="score-badge ${r.bal>=0?"sc-hi":"sc-lo"}">${faD(r.bal>0?"+"+r.bal:r.bal)}</span></div>`).join("")}</div>
+        </div>
+      </div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="history" style="color:var(--blue-xl)"></i>آخرین تراکنش‌ها</h3>
+        <div class="timeline mt16">${latest.map(t=>{const s=stuById(t.studentId);return `<div class="tl-item ${t.delta<0?"red":"green"}">
+          <div class="between"><b class="small">${esc(t.reason)}</b><span class="score-badge ${t.delta<0?"sc-lo":"sc-hi"}">${faD(t.delta>0?"+"+t.delta:t.delta)}</span></div>
+          <div class="tiny muted">${s?esc(stuFull(s))+" — "+clsName(s.classId):"—"} • ${fmtDateTime(t.at)} • ${esc(t.admin)}</div></div>`;}).join("")||`<div class="empty"><i data-lucide="inbox"></i>تراکنشی نیست.</div>`}</div>
+      </div>
+    </div>`;
+  },
+  mount(){
+    const fill=()=>{ const cid=$("#mr_cls").value;
+      $("#mr_stu").innerHTML=classStudents(cid).filter(s=>s.status==="approved").map(s=>`<option value="${s.id}">${esc(stuFull(s))} (${faD(s.studentId)})</option>`).join("")||`<option value="">دانش‌آموزی نیست</option>`; };
+    $("#mr_cls").addEventListener("input",fill); fill();
+  }
+},
+/* ---------- رتبه‌بندی ---------- */
+ranks:{
+  title:"رتبه‌بندی", icon:"line-chart", piCls:"ic-violet",
+  state:{cid:"all"},
+  html(){
+    return `<div class="card card-p">
+      <div class="between"><h3 class="h-md">تابلوی رتبه‌بندی بر اساس معدل واقعی</h3>
+        <div class="seg" id="rkSeg" style="max-width:560px;overflow-x:auto">
+          <button data-c="all" class="on">کل مدرسه</button>
+          ${db.classes.map(c=>`<button data-c="${c.id}">${c.name}</button>`).join("")}
+        </div></div>
+      <div class="tbl-wrap mt16"><table class="tbl"><thead><tr><th>رتبه</th><th>دانش‌آموز</th><th>کلاس</th><th>معدل</th><th>جنم</th><th>نشان</th></tr></thead><tbody id="rkRows"></tbody></table></div>
+    </div>`;
+  },
+  mount(){
+    const draw=()=>{
+      const cid=AdminSubs.ranks.state.cid;
+      const list=(cid==="all"?schoolRanking():classRanking(cid));
+      $("#rkRows").innerHTML=list.map((r,i)=>{
+        const bal=meritBalance(r.s.id);
+        return `<tr class="${i===0?"top":""}">
+          <td>${i<3?`<span class="medal ${"m"+(i+1)}">${faD(i+1)}</span>`:`<b class="muted">${faD(i+1)}</b>`}</td>
+          <td><div class="flex"><span class="avatar">${esc(r.s.firstName[0])}</span><div><b>${esc(stuFull(r.s))}</b><div class="tiny muted">${faD(r.s.studentId)}</div></div></div></td>
+          <td><span class="chip">${clsName(r.s.classId)}</span></td>
+          <td><span class="score-badge ${gradeColorCls(r.gpa)}">${faD(r.gpa)}</span></td>
+          <td style="color:${bal>=0?"var(--green)":"var(--red)"};font-weight:800">${faD(bal>0?"+"+bal:bal)}</td>
+          <td>${i===0?'<span class="pill p-gold"><span class="dot"></span>طلای فاتحان</span>':i===1?'<span class="pill p-gray"><span class="dot"></span>نقره</span>':i===2?'<span class="pill p-orange"><span class="dot"></span>برنز</span>':"—"}</td></tr>`;
+      }).join("")||`<tr><td colspan="6"><div class="empty"><i data-lucide="inbox"></i>داده‌ای نیست.</div></td></tr>`;
+      UI.icons();
+    };
+    $$("#rkSeg button").forEach(b=>b.addEventListener("click",()=>{ $$("#rkSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); AdminSubs.ranks.state.cid=b.dataset.c; draw(); }));
+    draw();
+  }
+},
+/* ---------- قرارگاه‌ها ---------- */
+bases:{
+  title:"مدیریت قرارگاه‌ها", icon:"castle", piCls:"ic-orange",
+  html(){
+    return `<div class="grid g3">
+      ${db.bases.map(b=>`<div class="card base-card" style="--bc:${b.color}44;--bcl:${b.color}">
+        <div class="base-ic"><i data-lucide="${b.icon}"></i></div>
+        <h3 class="h-md mt16">${esc(b.name)}</h3>
+        <p class="muted small mt8">${esc(b.desc.slice(0,80))}…</p>
+        <div class="tiny muted mt8"><i data-lucide="user-cog" style="width:13px;height:13px;vertical-align:-2px"></i> ${esc(b.manager)} — ${faD(b.members.length)} عضو — ${faD(b.activities.length)} فعالیت</div>
+        <div class="flex mt16">
+          <button class="btn btn-primary btn-sm" style="flex:1" onclick="editBaseModal('${b.id}')"><i data-lucide="pencil"></i>ویرایش</button>
+          <button class="btn btn-ghost btn-sm" onclick="go('base/${b.slug}')"><i data-lucide="eye"></i>صفحه عمومی</button>
+        </div></div>`).join("")}
+    </div>`;
+  }
+},
+/* ---------- گزارش‌ها ---------- */
+reports:{
+  title:"گزارش‌های آموزشی", icon:"bar-chart-3", piCls:"ic-green",
+  html(){
+    const subjAvg=db.subjects.map(s=>{const vs=db.grades.filter(g=>g.subjectId===s.id).map(g=>g.value);return {s,avg:vs.length?ROUND2(vs.reduce((a,b)=>a+b,0)/vs.length):0};});
+    const worst=subjAvg.slice().sort((a,b)=>a.avg-b.avg)[0], best=subjAvg.slice().sort((a,b)=>b.avg-a.avg)[0];
+    const top=schoolRanking()[0];
+    return `<div class="grid g3">
+      <div class="card kpi"><div class="ic ic-gold"><i data-lucide="crown"></i></div><div class="num" style="font-size:19px">${top?esc(stuFull(top.s)):"—"}</div><div class="lbl">بهترین دانش‌آموز مدرسه (معدل ${top?faD(top.gpa):"—"})</div></div>
+      <div class="card kpi"><div class="ic ic-green"><i data-lucide="trending-up"></i></div><div class="num" style="font-size:19px">${best?esc(best.s.name):"—"}</div><div class="lbl">قوی‌ترین درس مدرسه (میانگین ${best?faD(best.avg):"—"})</div></div>
+      <div class="card kpi"><div class="ic ic-red"><i data-lucide="trending-down"></i></div><div class="num" style="font-size:19px">${worst?esc(worst.s.name):"—"}</div><div class="lbl">نیازمند توجه (میانگین ${worst?faD(worst.avg):"—"})</div></div>
+    </div>
+    <div class="grid g2 mt24">
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="bar-chart-3" style="color:var(--blue-xl)"></i>میانگین دروس در کل مدرسه</h3>
+        <div style="position:relative;height:300px" class="mt16"><canvas id="chRep1"></canvas></div></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="zap" style="color:var(--orange)"></i>جمع جنم هر کلاس</h3>
+        <div style="position:relative;height:300px" class="mt16"><canvas id="chRep2"></canvas></div></div>
+    </div>`;
+  },
+  mount(){
+    if(!window.Chart) return;
+    const subjAvg=db.subjects.map(s=>{const vs=db.grades.filter(g=>g.subjectId===s.id).map(g=>g.value);return {name:s.name,avg:vs.length?ROUND2(vs.reduce((a,b)=>a+b,0)/vs.length):0};});
+    const c1=$("#chRep1"); if(c1) Charts.make(c1,{type:"bar",data:{labels:subjAvg.map(x=>x.name),datasets:[{data:subjAvg.map(x=>x.avg),backgroundColor:subjAvg.map(x=>x.avg>=17?"rgba(47,191,138,.8)":x.avg>=14?"rgba(59,107,212,.8)":"rgba(245,180,0,.8)"),borderRadius:8,maxBarThickness:34}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",scales:{x:{min:0,max:20}},plugins:{legend:{display:false}}}});
+    const c2=$("#chRep2"); if(c2) Charts.make(c2,{type:"bar",data:{labels:db.classes.map(c=>c.name),datasets:[{data:db.classes.map(c=>classStudents(c.id).reduce((a,s)=>a+meritBalance(s.id),0)),backgroundColor:"rgba(240,138,93,.75)",borderRadius:9,maxBarThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  }
+},
+/* ---------- تاریخچه ---------- */
+logs:{
+  title:"تاریخچه فعالیت سامانه", icon:"history", piCls:"ic-violet",
+  html(){
+    return `<div class="card card-p">
+      <div class="between"><h3 class="h-md flex"><i data-lucide="list-checks" style="color:var(--violet)"></i>رویدادها (${faD(db.logs.length)})</h3>
+      <div class="in-wrap" style="min-width:240px"><i data-lucide="search"></i><input class="input" id="lgSearch" placeholder="جست‌وجو در رویدادها…"></div></div>
+      <div class="timeline mt16" id="lgList"></div>
+    </div>`;
+  },
+  mount(){
+    const draw=()=>{
+      const q=($("#lgSearch").value||"").trim();
+      const list=db.logs.filter(l=>!q||(l.action+l.detail+l.actor).includes(q)).slice(0,120);
+      $("#lgList").innerHTML=list.map((l,i)=>`<div class="tl-item ${l.actor==="مدیر"?"":l.actor==="سامانه"?"gold":"green"}">
+        <div class="between"><b class="small">${esc(l.action)} <span class="pill ${l.actor==="مدیر"?"p-gold":l.actor==="سامانه"?"p-blue":"p-green"}" style="margin-inline-start:6px">${esc(l.actor)}</span></b><span class="tiny muted">${fmtDateTime(l.at)}</span></div>
+        <div class="tiny muted">${esc(l.detail||"")}</div></div>`).join("")||`<div class="empty"><i data-lucide="search-x"></i>رویدادی یافت نشد.</div>`;
+      UI.icons();
+    };
+    $("#lgSearch").addEventListener("input",draw); draw();
+  }
+},
+/* ---------- تنظیمات ---------- */
+settings:{
+  title:"تنظیمات سامانه", icon:"settings", piCls:"ic-red",
+  html(me){
+    return `<div class="grid g2">
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="school" style="color:var(--blue-xl)"></i>اطلاعات مدرسه</h3>
+        <div class="field mt16"><label>نام مدرسه</label><input class="input" id="setName" value="${esc(db.settings.schoolName)}"></div>
+        <div class="field"><label>شعار</label><input class="input" id="setSlogan" value="${esc(db.settings.slogan)}"></div>
+        <div class="field"><label>سال تحصیلی (شمسی)</label><input class="input" id="setYear" value="${esc(db.settings.year)}"></div>
+        <button class="btn btn-primary" onclick="saveSettings()"><i data-lucide="save"></i>ذخیره تنظیمات</button></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="key-round" style="color:var(--orange)"></i>تغییر رمز مدیر</h3>
+        <form id="admPw" class="mt16">
+          <div class="field"><label>رمز فعلی</label><input class="input" id="ap0" type="password"></div>
+          <div class="field"><label>رمز جدید</label><input class="input" id="ap1" type="password"></div>
+          <div class="field"><label>تکرار رمز جدید</label><input class="input" id="ap2" type="password"></div>
+          <button class="btn btn-accent" type="submit"><i data-lucide="shield-check"></i>تغییر رمز</button>
+        </form></div>
+      <div class="card card-p"><h3 class="h-md flex mb-1"><i data-lucide="shield-check" style="color:var(--green)"></i>وضعیت امنیت</h3>
+        <div class="grid mt16" style="gap:9px">
+          ${["رمزها با SHA-256 (معادل password_hash) هش می‌شوند","نشست کاربر با بستن مرورگر منقضی می‌شود","پس از ۵ تلاش ناموفق، ورود ۲ دقیقه قفل می‌شود","دسترسی پنل مدیر و دانش‌آموز کاملاً جداست","تاریخچه کامل تغییر نمرات نگهداری می‌شود","در نسخه PHP: PDO + Prepared Statements و توکن CSRF"].map(t=>`<div class="flex small muted" style="gap:8px"><i data-lucide="check-circle-2" style="width:15px;height:15px;color:var(--green);flex-shrink:0"></i>${t}</div>`).join("")}
+        </div></div>
+      <div class="card card-p" style="border-color:rgba(239,91,100,.35)"><h3 class="h-md flex mb-1"><i data-lucide="alert-triangle" style="color:var(--red)"></i>منطقه حساس</h3>
+        <p class="muted small mt16">اطلاعات نصب: ${fmtDateTime(db.installedAt)} — نسخه دیتابیس ${faD(db.version)}</p>
+        <button class="btn btn-danger mt16" onclick="resetDemo()"><i data-lucide="refresh-ccw"></i>بازنشانی کامل داده‌های نمایشی</button>
+        <div class="hint mt8">در نسخه PHP این گزینه وجود ندارد؛ داده‌ها فقط در دیتابیس MySQL تغییر می‌کنند.</div></div>
+    </div>`;
+  },
+  mount(me){
+    $("#admPw").addEventListener("submit", async ev=>{
+      ev.preventDefault();
+      const o=$("#ap0").value,p1=$("#ap1").value,p2=$("#ap2").value;
+      if((await hashPW(o,me.u.salt))!==me.u.hash) return UI.toast("رمز فعلی اشتباه است.","err");
+      if(p1.length<8||!/[a-zA-Z]/.test(p1)||!/\d/.test(p1)) return UI.toast("رمز جدید ضعیف است (۸+ کاراکتر، حرف و عدد).","err");
+      if(p1!==p2) return UI.toast("تکرار رمز یکسان نیست.","err");
+      me.u.salt=uid(); me.u.hash=await hashPW(p1,me.u.salt);
+      logActivity("مدیر","تغییر رمز مدیر","از تنظیمات سامانه"); DB.save();
+      UI.toast("رمز مدیر تغییر کرد.","ok"); ev.target.reset();
+    });
+  }
+}
+});
+
+function saveSettings(){
+  db.settings.schoolName=$("#setName").value.trim()||db.settings.schoolName;
+  db.settings.slogan=$("#setSlogan").value.trim();
+  db.settings.year=$("#setYear").value.trim();
+  logActivity("مدیر","ویرایش تنظیمات","نام/شعار/سال مدرسه"); DB.save();
+  UI.toast("تنظیمات ذخیره شد.","ok"); render();
+}
+/* ---------- MERIT OPS ---------- */
+function applyMeritRule(i){ const r=MERIT_RULES[i]; $("#mr_delta").value=r.v; $("#mr_reason").value=r.t; }
+function submitMerit(){
+  const sid=$("#mr_stu").value; if(!sid) return UI.toast("دانش‌آموزی انتخاب نشده است.","err");
+  const d=parseInt($("#mr_delta").value,10);
+  const reason=$("#mr_reason").value.trim();
+  if(isNaN(d)||d===0) return UI.toast("مقدار جنم نامعتبر است.","err");
+  if(!reason) return UI.toast("دلیل تراکنش الزامی است.","err");
+  const s=stuById(sid);
+  db.merits.push({id:"m_"+uid(),studentId:sid,delta:d,reason,admin:"مدیر سامانه",at:Date.now()});
+  logActivity("مدیر",d<0?"کسر جنم":"افزودن جنم",`${stuFull(s)}: ${faD(d>0?"+"+d:d)} (${reason})`); DB.save();
+  UI.toast(`جنم ${stuFull(s)} ${d<0?"کسر":"افزوده"} شد. موجودی: ${faD(meritBalance(sid))}`,"ok"); render();
+}
+/* ---------- ACHIEVEMENT OPS ---------- */
+function editAchievementModal(aid){
+  const a=aid?db.achievements.find(x=>x.id===aid):null;
+  const studs=approvedStudents();
+  UI.promptFields(a?"ویرایش افتخار":"ثبت افتخار جدید",[
+    {key:"title",label:"عنوان افتخار",value:a?a.title:"",req:true},
+    {key:"stu",label:"دانش‌آموز",type:"select",options:[{v:"",t:"— تیم/مدرسه —"},...studs.map(s=>({v:s.id,t:`${stuFull(s)} (${faD(s.studentId)})`}))],value:a?(a.studentId||""):""},
+    {key:"type",label:"نوع",type:"select",options:["علمی","فرهنگی","انضباطی"].map(t=>({v:t,t})),value:a?a.type:"علمی"},
+    {key:"medal",label:"مدال",type:"select",options:[{v:"gold",t:"طلا"},{v:"silver",t:"نقره"},{v:"bronze",t:"برنز"}],value:a?a.medal:"gold"},
+    {key:"desc",label:"توضیح",type:"textarea",value:a?a.desc:""}
+  ], out=>{
+    const j=todayJ();
+    const obj={title:out.title,studentId:out.stu||null,type:out.type,medal:out.medal,desc:out.desc};
+    if(a) Object.assign(a,obj);
+    else db.achievements.unshift({id:"ac_"+uid(),...obj,jdate:j});
+    logActivity("مدیر",a?"ویرایش افتخار":"ثبت افتخار",out.title); DB.save();
+    UI.toast("افتخار ذخیره شد.","ok"); render(); return true;
+  },"trophy");
+}
+function deleteAchievement(aid){
+  const a=db.achievements.find(x=>x.id===aid); if(!a) return;
+  UI.confirm(`افتخار «${a.title}» حذف شود؟`, ()=>{
+    db.achievements=db.achievements.filter(x=>x.id!==aid);
+    logActivity("مدیر","حذف افتخار",a.title); DB.save(); UI.toast("افتخار حذف شد.","ok"); render();
+  });
+}
+/* ---------- BASE OPS ---------- */
+function editBaseModal(bid){
+  const b=db.bases.find(x=>x.id===bid); if(!b) return;
+  UI.promptFields("ویرایش "+b.name,[
+    {key:"manager",label:"مسئول قرارگاه",value:b.manager,req:true},
+    {key:"desc",label:"معرفی",type:"textarea",value:b.desc,req:true},
+    {key:"members",label:"اعضا (با ویرگول جدا کنید)",value:b.members.join("، ")},
+    {key:"acts",label:"فعالیت‌ها (هر خط یک فعالیت)",type:"textarea",value:b.activities.join("\n")},
+    {key:"report",label:"گزارش عملکرد",type:"textarea",value:b.report}
+  ], out=>{
+    b.manager=out.manager; b.desc=out.desc;
+    b.members=out.members.split(/[,،]/).map(x=>x.trim()).filter(Boolean);
+    b.activities=out.acts.split("\n").map(x=>x.trim()).filter(Boolean);
+    b.report=out.report;
+    logActivity("مدیر","ویرایش قرارگاه",b.name); DB.save();
+    UI.toast("قرارگاه به‌روزرسانی شد.","ok"); render(); return true;
+  },"castle");
+}
+
+/* ================= BOOT ================= */
+(async function boot(){
+  applyTheme();
+  try{
+    if(!DB.load()) await seedDatabase();
+    chartDefaults();
+    if(!location.hash) location.hash="#/home";
+    render();
+  }catch(e){ console.error("Boot error:",e); }
+  setTimeout(()=>{ const sp=$("#splash"); if(sp){ sp.classList.add("hide"); setTimeout(()=>sp.remove(),700); } }, 900);
+})();
+</script>
+</body>
+</html>
