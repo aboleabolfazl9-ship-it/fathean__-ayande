@@ -1,0 +1,122 @@
+name: app
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: on-failure
+    environment:
+      POSTGRES_USER: school
+      POSTGRES_PASSWORD: school_dev_password
+      POSTGRES_DB: school
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U school -d school"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+      start_period: 5s
+
+  migrate:
+    image: node:22-slim
+    working_dir: /workspace
+    restart: "no"
+    volumes:
+      - .:/workspace
+      - server_modules:/workspace/node_modules
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    command: ["sh", "-ec", "npm install --no-audit --no-fund --loglevel=error && exec npm run migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  seed:
+    image: node:22-slim
+    working_dir: /workspace
+    restart: "no"
+    volumes:
+      - .:/workspace
+      - server_modules:/workspace/node_modules
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    command: ["sh", "-ec", "node server/scripts/seed.js"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  api:
+    image: node:22-slim
+    working_dir: /workspace
+    restart: on-failure
+    volumes:
+      - .:/workspace
+      - server_modules:/workspace/node_modules
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    environment:
+      - BASE44_PREVIEW_MODE
+    ports:
+      - "8000:8000"
+    command: ["sh", "-ec", "npm install --no-audit --no-fund --loglevel=error && exec npm run dev"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    labels:
+      base44.project: "سامانه مدیریت آموزشی فاتحان آینده"
+      base44.kind: api
+      base44.port: "8000"
+
+  web:
+    image: node:22-slim
+    working_dir: /workspace/client
+    restart: on-failure
+    volumes:
+      - .:/workspace
+      - client_modules:/workspace/client/node_modules
+    environment:
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+      - BASE44_PREVIEW_MODE
+    ports:
+      - "3000:3000"
+    command:
+      ["sh", "-ec", "npm install --no-audit --no-fund --loglevel=error && exec npm run dev -- --host 0.0.0.0 --port 3000"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+    depends_on:
+      api:
+        condition: service_healthy
+    labels:
+      base44.project: "سامانه مدیریت آموزشی فاتحان آینده"
+      base44.kind: web
+      base44.port: "3000"
+
+volumes:
+  db_data:
+  server_modules:
+  client_modules:
