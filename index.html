@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کتاب‌خانه | فروشگاه اینترنتی کتاب</title>
+<meta name="description" content="کتاب‌خانه — فروشگاه اینترنتی کتاب؛ دنیایی از داستان‌ها، دانایی و خیال. خرید کتاب با ارسال سریع به سراسر ایران.">
+<meta name="theme-color" content="#070B16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070B16'/%3E%3Cpath d='M18 16h13a5 5 0 0 1 5 5v27a5 5 0 0 0-5-5H18z' fill='%23E7B957'/%3E%3Cpath d='M46 16H33a5 5 0 0 0-5 5v27a5 5 0 0 1 5-5h13z' fill='%234B91FF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bgfx" aria-hidden="true">
+  <div class="bgfx-glow bgfx-glow--gold"></div>
+  <div class="bgfx-glow bgfx-glow--blue"></div>
+  <div class="bgfx-grid"></div>
+  <div class="bgfx-noise"></div>
+</div>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.4l2.6 12h12"/><path d="M6.6 7H21l-1.7 8H7.9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v11H2z"/><path d="M13 9h4.5L21 12.5V17h-8"/><circle cx="6.5" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8.2-8 9.5C7.4 20.2 4 17 4 12V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19"/><path d="M6.5 15h4"/></symbol>
+  <symbol id="i-support" viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="2.5" y="13" width="4" height="6" rx="2"/><rect x="17.5" y="13" width="4" height="6" rx="2"/><path d="M19.5 19a3 3 0 0 1-3 2H13"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4-2 1.5a11 11 0 0 0 5.5 5.5L16 12l4 1.5v3A2.5 2.5 0 0 1 17.5 19C10.6 18.4 5.6 13.4 5 6.5A2.5 2.5 0 0 1 6.5 3z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.9z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.5 12.8 12.8 20.5a2 2 0 0 1-2.8 0l-6.5-6.5a2 2 0 0 1-.6-1.5l.3-6a2 2 0 0 1 1.9-1.9l6-.3a2 2 0 0 1 1.5.6l6.5 6.5a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
+  <symbol id="i-printer" viewBox="0 0 24 24"><path d="M7 8V3h10v5"/><rect x="3.5" y="8" width="17" height="8" rx="2"/><path d="M7 16h10v5H7z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M9.9 5.9A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3 3.9"/><path d="M6.3 7.6A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5c1.4 0 2.6-.3 3.8-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1"/></symbol>
+  <symbol id="i-telegram" viewBox="0 0 24 24"><path d="M21 4 2.8 11.2l5.4 1.7L21 4z"/><path d="m8.2 12.9 1 6 2.7-3.2 5 2.9L21 4"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3.5 20.5l1.3-4.3A8.5 8.5 0 1 1 20.5 11.7z"/><path d="M8.8 8.6c-.3 2.4 3.4 6.4 6.2 6.4.7 0 1.4-.7 1.3-1.4l-1.9-.9-1 1a7.6 7.6 0 0 1-2.6-2.5l1-1-.9-1.9c-.8-.2-1.5.4-1.6 1.1z"/></symbol>
+  <symbol id="i-mail2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m4 6 8 6 8-6"/></symbol>
+</svg>
+
+<!-- ============ TOP NAVIGATION ============ -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#/" aria-label="کتاب‌خانه — صفحه اصلی">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><path d="M7 5h11a4 4 0 0 1 4 4v25a4 4 0 0 0-4-4H7z" fill="url(#bgA)"/><path d="M33 5H22a4 4 0 0 0-4 4v25a4 4 0 0 1 4-4h11z" fill="url(#bgB)"/><defs><linearGradient id="bgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E7B957"/><stop offset="1" stop-color="#C99B45"/></linearGradient><linearGradient id="bgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4B91FF"/><stop offset="1" stop-color="#2864C5"/></linearGradient></defs></svg>
+      </span>
+      <span class="brand-text">
+        <strong>کتاب‌خانه</strong>
+        <small>فروشگاه کتاب</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="ناوبری اصلی">
+      <a href="#/" data-nav="/">صفحه اصلی</a>
+      <a href="#/books" data-nav="/books">همه کتاب‌ها</a>
+      <a href="#/categories" data-nav="/categories">دسته‌بندی‌ها</a>
+      <a href="#/bestsellers" data-nav="/bestsellers">پرفروش‌ها</a>
+      <a href="#/offers" data-nav="/offers">تخفیف‌ها</a>
+      <a href="#/about" data-nav="/about">درباره ما</a>
+    </nav>
+
+    <div class="nav-actions">
+      <form class="nav-search" id="navSearchForm" role="search">
+        <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+        <input type="search" id="navSearch" placeholder="جست‌وجوی کتاب یا نویسنده…" aria-label="جست‌وجوی کتاب یا نویسنده">
+      </form>
+      <button class="icon-btn search-toggle" id="searchToggle" aria-label="جست‌وجو" aria-expanded="false">
+        <svg class="ic"><use href="#i-search"/></svg>
+      </button>
+
+      <button class="cart-btn" id="cartBtn" aria-label="سبد خرید">
+        <svg class="ic"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cartCount">۰</span>
+      </button>
+
+      <button class="btn btn-ghost nav-auth" id="loginBtn" type="button">ورود</button>
+      <button class="btn btn-gold nav-auth" id="registerBtn" type="button">ثبت‌نام</button>
+
+      <button class="account-chip" id="accountBtn" type="button" hidden>
+        <span class="account-avatar" id="accountAvatar" aria-hidden="true"></span>
+        <span class="account-name" id="accountName">حساب من</span>
+      </button>
+
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="منو" aria-expanded="false">
+        <svg class="ic"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-progress" id="navProgress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+
+  <!-- ================= HOME ================= -->
+  <section class="view" data-view="/">
+
+    <section class="hero">
+      <div class="hero-aura" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">
+            <svg class="ic" aria-hidden="true"><use href="#i-book"/></svg>
+            فروشگاه اینترنتی کتاب · نسخه نمایشی
+          </span>
+          <h1 class="hero-title">دنیایی از کتاب،<br><span class="gold-text">فراتر از تصور</span></h1>
+          <p class="hero-sub">کتاب مورد علاقه‌ات را پیدا کن و سفر تازه‌ای به دنیای دانایی آغاز کن.</p>
+          <div class="hero-actions">
+            <a class="btn btn-gold btn-lg" href="#/books">
+              مشاهده کتاب‌ها
+              <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+            <a class="btn btn-outline btn-lg" href="#/bestsellers">پرفروش‌ترین کتاب‌ها</a>
+          </div>
+          <ul class="hero-feats">
+            <li><svg class="ic"><use href="#i-truck"/></svg> ارسال به سراسر ایران</li>
+            <li><svg class="ic"><use href="#i-shield"/></svg> ضمانت اصالت کتاب</li>
+            <li><svg class="ic"><use href="#i-card"/></svg> پرداخت امن</li>
+          </ul>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="hero-lamp"></div>
+          <div class="shelf">
+            <div class="shelf-row shelf-row--back"></div>
+            <div class="shelf-books" id="shelfBooks"></div>
+            <div class="shelf-face"></div>
+          </div>
+          <div class="float-book fb-1">
+            <span class="fb-frame"></span>
+            <span class="fb-title">شاهنامه</span>
+            <span class="fb-rule"></span>
+            <span class="fb-author">فردوسی</span>
+          </div>
+          <div class="float-book fb-2">
+            <span class="fb-frame"></span>
+            <span class="fb-title">سووشون</span>
+            <span class="fb-rule"></span>
+            <span class="fb-author">سیمین دانشور</span>
+          </div>
+          <div class="float-book fb-3">
+            <span class="fb-frame"></span>
+            <span class="fb-title">مثنوی</span>
+            <span class="fb-rule"></span>
+            <span class="fb-author">مولانا</span>
+          </div>
+          <div class="hero-dust" id="heroDust"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-band container" aria-label="مزیت‌های خرید">
+      <div class="trust-item"><svg class="ic"><use href="#i-truck"/></svg><div><strong>ارسال سریع</strong><span>پست پیشتاز و تیپاکس</span></div></div>
+      <div class="trust-item"><svg class="ic"><use href="#i-shield"/></svg><div><strong>ضمانت اصالت</strong><span>کتاب‌های ناشر اصلی</span></div></div>
+      <div class="trust-item"><svg class="ic"><use href="#i-card"/></svg><div><strong>پرداخت امن</strong><span>درگاه بانکی معتبر</span></div></div>
+      <div class="trust-item"><svg class="ic"><use href="#i-support"/></svg><div><strong>پشتیبانی کتاب‌خوان‌ها</strong><span>هر روز ۹ تا ۲۱</span></div></div>
+    </section>
+
+    <section class="section container">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">مسیر کتاب‌خوانی</span>
+          <h2 class="section-title">دسته‌بندی‌های منتخب</h2>
+          <p class="section-sub">از رمان‌های ماندگار تا اندیشه و فلسفه؛ قفسه‌ات را بساز.</p>
+        </div>
+        <a class="link-more" href="#/categories">همه دسته‌بندی‌ها <svg class="ic"><use href="#i-chevron"/></svg></a>
+      </header>
+      <div class="cat-grid" id="homeCategories"></div>
+    </section>
+
+    <section class="section container">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">تازه‌رسیده‌ها</span>
+          <h2 class="section-title">منتخب کتاب‌خانه</h2>
+          <p class="section-sub">کتاب‌هایی که این روزها بیشتر از همه ورق می‌خورند.</p>
+        </div>
+        <a class="link-more" href="#/books">مشاهده فروشگاه <svg class="ic"><use href="#i-chevron"/></svg></a>
+      </header>
+      <div class="book-grid" id="homeBooks"></div>
+    </section>
+
+    <section class="section container">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">انتخاب خوانندگان</span>
+          <h2 class="section-title">پرفروش‌ترین کتاب‌ها</h2>
+          <p class="section-sub">رتبه‌بندی بر اساس انتخاب سردبیران کتاب‌خانه.</p>
+        </div>
+        <a class="link-more" href="#/bestsellers">همه پرفروش‌ها <svg class="ic"><use href="#i-chevron"/></svg></a>
+      </header>
+      <div class="best-rail" id="homeBestsellers"></div>
+    </section>
+
+    <section class="section container">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">فرصت‌های مطالعه</span>
+          <h2 class="section-title">پیشنهادهای ویژه کتاب‌خانه</h2>
+          <p class="section-sub">تخفیف‌های فعال روی کتاب‌های منتخب.</p>
+        </div>
+        <a class="link-more" href="#/offers">همه تخفیف‌ها <svg class="ic"><use href="#i-chevron"/></svg></a>
+      </header>
+      <div class="book-grid" id="homeOffers"></div>
+    </section>
+
+    <section class="container">
+      <div class="cta-band">
+        <div class="cta-copy">
+          <span class="eyebrow">باشگاه کتاب‌خانه</span>
+          <h2>کتاب، آغاز یک دنیای تازه است.</h2>
+          <p>سفارشت را ثبت کن و کتاب بعدی‌ات را با بسته‌بندی ویژه کتاب‌خانه دریافت کن.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn btn-gold btn-lg" href="#/books">شروع خرید</a>
+          <a class="btn btn-outline btn-lg" href="#/guide">راهنمای خرید</a>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ALL BOOKS ================= -->
+  <section class="view" data-view="/books" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">فروشگاه کتاب</span>
+      <h1 class="page-title">همه کتاب‌ها</h1>
+      <p class="page-sub">جست‌وجو بر اساس عنوان، نویسنده یا ناشر و فیلتر بر اساس دسته‌بندی و قیمت.</p>
+    </div>
+
+    <div class="container shop-layout">
+      <aside class="filters card" aria-label="فیلترها">
+        <div class="filters-head">
+          <h3><svg class="ic"><use href="#i-filter"/></svg> فیلترها</h3>
+          <button class="link-btn" id="resetFilters" type="button">پاک‌کردن</button>
+        </div>
+
+        <div class="field">
+          <label for="filterSearch">جست‌وجو</label>
+          <input type="search" id="filterSearch" placeholder="عنوان، نویسنده یا ناشر">
+        </div>
+
+        <div class="field">
+          <label for="filterCategory">دسته‌بندی</label>
+          <select id="filterCategory">
+            <option value="">همه دسته‌بندی‌ها</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filterSort">ترتیب نمایش</label>
+          <select id="filterSort">
+            <option value="newest">جدیدترین</option>
+            <option value="cheap">ارزان‌ترین</option>
+            <option value="expensive">گران‌ترین</option>
+            <option value="popular">محبوب‌ترین</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filterPrice">حداکثر قیمت: <span id="priceLabel">نامحدود</span></label>
+          <input type="range" id="filterPrice" min="100000" max="900000" step="50000" value="900000">
+          <div class="range-scale"><span>۱۰۰٬۰۰۰</span><span>۹۰۰٬۰۰۰ تومان</span></div>
+        </div>
+
+        <div class="field">
+          <label for="filterStock" class="checkline">
+            <input type="checkbox" id="filterStock"> فقط کتاب‌های موجود
+          </label>
+        </div>
+
+        <div class="filters-note">
+          <svg class="ic"><use href="#i-tag"/></svg>
+          <span>کد تخفیف را در مرحله پرداخت وارد کن.</span>
+        </div>
+      </aside>
+
+      <div class="shop-main">
+        <div class="shop-bar">
+          <p class="result-count" id="resultCount">در حال بارگذاری…</p>
+          <button class="btn btn-ghost btn-sm filter-toggle" id="filterToggle" type="button" aria-expanded="false">
+            <svg class="ic"><use href="#i-filter"/></svg> فیلترها
+          </button>
+          <div class="chips" id="activeChips"></div>
+        </div>
+        <div class="book-grid" id="shopGrid" aria-live="polite"></div>
+        <div class="empty-state" id="shopEmpty" hidden>
+          <div class="empty-art"><svg class="ic"><use href="#i-book"/></svg></div>
+          <h3>کتابی با این مشخصات پیدا نشد</h3>
+          <p>عبارت جست‌وجو یا فیلترها را تغییر بده.</p>
+          <button class="btn btn-outline" id="emptyReset" type="button">نمایش همه کتاب‌ها</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CATEGORIES ================= -->
+  <section class="view" data-view="/categories" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">قفسه‌های کتاب‌خانه</span>
+      <h1 class="page-title">دسته‌بندی‌ها</h1>
+      <p class="page-sub">هر قفسه، دریچه‌ای به یک دنیای تازه.</p>
+    </div>
+    <div class="container">
+      <div class="cat-grid cat-grid--wide" id="allCategories"></div>
+    </div>
+  </section>
+
+  <!-- ================= BESTSELLERS ================= -->
+  <section class="view" data-view="/bestsellers" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">انتخاب خوانندگان</span>
+      <h1 class="page-title">پرفروش‌ترین کتاب‌ها</h1>
+      <p class="page-sub">فهرست پرفروش‌های کتاب‌خانه بر اساس انتخاب سردبیران؛ بدون آمار ساختگی.</p>
+    </div>
+    <div class="container">
+      <div class="best-list" id="bestsellersList"></div>
+    </div>
+  </section>
+
+  <!-- ================= OFFERS ================= -->
+  <section class="view" data-view="/offers" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">فرصت‌های مطالعه</span>
+      <h1 class="page-title">پیشنهادهای ویژه کتاب‌خانه</h1>
+      <p class="page-sub">تخفیف‌های فعال روی کتاب‌های منتخب. قیمت‌های خط‌خورده، قیمت پیش از تخفیف است.</p>
+    </div>
+    <div class="container">
+      <div class="coupon-band">
+        <div class="coupon-copy">
+          <h3>کد تخفیف کتاب‌خانه</h3>
+          <p>در مرحله پرداخت، کد <strong class="gold-text">BOOK10</strong> را وارد کن.</p>
+          <p class="muted">اعتبار کدها و سقف استفاده در نسخه نمایشی سمت مرورگر بررسی می‌شود؛ اعتبارسنجی نهایی در نسخه سروری انجام می‌شود.</p>
+        </div>
+        <button class="btn btn-outline" id="copyCoupon" type="button">کپی کد تخفیف</button>
+      </div>
+      <div class="book-grid" id="offersGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="view" data-view="/about" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">درباره ما</span>
+      <h1 class="page-title">کتاب‌خانه؛ قفسه‌ای برای همه</h1>
+      <p class="page-sub">دنیایی از داستان‌ها، دانایی و خیال.</p>
+    </div>
+    <div class="container prose-layout">
+      <article class="prose card">
+        <h2>داستان کتاب‌خانه</h2>
+        <p>کتاب‌خانه یک فروشگاه اینترنتی کتاب است که با این باور شکل گرفته که انتخاب کتاب باید آسان، لذت‌بخش و مطمئن باشد. از ادبیات کلاسیک فارسی تا روان‌شناسی، فلسفه، تاریخ و کتاب کودک، همه در یک قفسه گرد آمده‌اند.</p>
+        <h2>چرا کتاب‌خانه</h2>
+        <ul>
+          <li>گزیده‌ای از کتاب‌های ناشران معتبر ایرانی</li>
+          <li>توضیحات و مشخصات کامل برای هر کتاب</li>
+          <li>بسته‌بندی محافظ و امکان بسته‌بندی هدیه</li>
+          <li>پشتیبانی از سفارش‌ها و پیگیری ارسال</li>
+        </ul>
+        <h2>وضعیت این نسخه</h2>
+        <p>این نسخه، نمایشی از فروشگاه است و اطلاعات کتاب‌ها نمونه است. حساب کاربری، سفارش و پرداخت در آن به‌صورت آزمایشی و در مرورگر تو ذخیره می‌شود. نسخه تجاری با PHP و MySQL، احراز هویت امن، مدیریت سفارش و درگاه پرداخت واقعی در پوشه <code>production</code> همین پروژه قرار دارد.</p>
+      </article>
+      <aside class="side-card card">
+        <h3>ارتباط سریع</h3>
+        <ul class="contact-list">
+          <li><svg class="ic"><use href="#i-phone"/></svg><a href="tel:02100000000">۰۲۱-۰۰۰۰۰۰۰۰</a></li>
+          <li><svg class="ic"><use href="#i-mail"/></svg><a href="mailto:hello@ketabkhaneh.example">hello@ketabkhaneh.example</a></li>
+          <li><svg class="ic"><use href="#i-pin"/></svg><span>تهران، خیابان کتاب، پلاک ۱</span></li>
+        </ul>
+        <a class="btn btn-gold btn-block" href="#/contact">تماس با ما</a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="view" data-view="/contact" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">پشتیبانی</span>
+      <h1 class="page-title">تماس با ما</h1>
+      <p class="page-sub">سؤال درباره سفارش یا انتخاب کتاب داری؟ برایمان بنویس.</p>
+    </div>
+    <div class="container contact-layout">
+      <form class="card form-card" id="contactForm" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="cName">نام و نام خانوادگی</label><input id="cName" name="name" required autocomplete="name"><small class="err" data-err="cName"></small></div>
+          <div class="field"><label for="cPhone">شماره موبایل</label><input id="cPhone" name="phone" inputmode="numeric" required autocomplete="tel"><small class="err" data-err="cPhone"></small></div>
+        </div>
+        <div class="field"><label for="cSubject">موضوع</label><input id="cSubject" name="subject" required></div>
+        <div class="field"><label for="cMessage">متن پیام</label><textarea id="cMessage" name="message" rows="5" required></textarea><small class="err" data-err="cMessage"></small></div>
+        <button class="btn btn-gold btn-lg" type="submit">ارسال پیام</button>
+        <p class="demo-note"><svg class="ic"><use href="#i-shield"/></svg> در نسخه نمایشی پیام فقط در همین مرورگر ثبت می‌شود.</p>
+      </form>
+      <aside class="card contact-info">
+        <h3>راه‌های ارتباطی</h3>
+        <ul class="contact-list">
+          <li><svg class="ic"><use href="#i-phone"/></svg><div><strong>تلفن پشتیبانی</strong><a href="tel:02100000000">۰۲۱-۰۰۰۰۰۰۰۰</a></div></li>
+          <li><svg class="ic"><use href="#i-mail"/></svg><div><strong>ایمیل</strong><a href="mailto:support@ketabkhaneh.example">support@ketabkhaneh.example</a></div></li>
+          <li><svg class="ic"><use href="#i-pin"/></svg><div><strong>نشانی</strong><span>تهران، خیابان کتاب، پلاک ۱</span></div></li>
+          <li><svg class="ic"><use href="#i-support"/></svg><div><strong>ساعات پاسخ‌گویی</strong><span>هر روز ۹ تا ۲۱</span></div></li>
+        </ul>
+        <div class="social-row">
+          <a class="icon-btn" href="#/contact" aria-label="اینستاگرام"><svg class="ic"><use href="#i-instagram"/></svg></a>
+          <a class="icon-btn" href="#/contact" aria-label="تلگرام"><svg class="ic"><use href="#i-telegram"/></svg></a>
+          <a class="icon-btn" href="#/contact" aria-label="واتساپ"><svg class="ic"><use href="#i-whatsapp"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= GUIDE ================= -->
+  <section class="view" data-view="/guide" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">راهنمای خرید</span>
+      <h1 class="page-title">چگونه از کتاب‌خانه خرید کنیم؟</h1>
+      <p class="page-sub">چهار قدم ساده تا رسیدن کتاب به دستت.</p>
+    </div>
+    <div class="container prose-layout">
+      <article class="prose card">
+        <h2>۱. انتخاب کتاب</h2>
+        <p>با جست‌وجو یا فیلترهای فروشگاه، کتاب مورد نظرت را پیدا کن. در صفحه جزئیات، مشخصات، ناشر و توضیحات کتاب را ببین.</p>
+        <h2>۲. افزودن به سبد خرید</h2>
+        <p>تعداد را انتخاب کن و کتاب را به سبد خرید اضافه کن. سبد خرید پس از بستن مرورگر هم باقی می‌ماند.</p>
+        <h2>۳. ثبت سفارش</h2>
+        <p>در مرحله پرداخت، اطلاعات گیرنده و نشانی را وارد کن. هزینه ارسال بر اساس مبلغ سفارش محاسبه می‌شود.</p>
+        <h2>۴. پیگیری سفارش</h2>
+        <p>شماره سفارش و وضعیت آن در بخش «حساب من ← سفارش‌های من» قابل مشاهده است.</p>
+        <h2>شرایط ارسال</h2>
+        <ul>
+          <li>سفارش‌های بالای ۵۰۰٬۰۰۰ تومان ارسال رایگان دارند.</li>
+          <li>ارسال به تهران ۱ تا ۲ روز کاری و به شهرستان ۲ تا ۴ روز کاری است.</li>
+        </ul>
+        <p class="demo-note">در نسخه نمایشی، سفارش شبیه‌سازی می‌شود و تنها در همین مرورگر ذخیره می‌شود.</p>
+      </article>
+      <aside class="side-card card">
+        <h3>کد تخفیف</h3>
+        <p>با کد <strong class="gold-text">BOOK10</strong> ده درصد تخفیف بگیر.</p>
+        <p class="muted">سقف استفاده و تاریخ انقضای کدها در نسخه سروری کنترل می‌شود.</p>
+        <a class="btn btn-gold btn-block" href="#/offers">دیدن تخفیف‌ها</a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= PRIVACY ================= -->
+  <section class="view" data-view="/privacy" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">قوانین</span>
+      <h1 class="page-title">حریم خصوصی</h1>
+      <p class="page-sub">اطلاعات تو چگونه نگهداری می‌شود.</p>
+    </div>
+    <div class="container prose-layout">
+      <article class="prose card">
+        <h2>اطلاعاتی که ذخیره می‌شود</h2>
+        <p>در نسخه نمایشی، نام، شماره موبایل، نشانی و سفارش‌ها فقط در حافظه محلی مرورگر تو (localStorage) ذخیره می‌شوند و به هیچ سروری ارسال نمی‌شوند.</p>
+        <h2>رمز عبور</h2>
+        <p>رمز عبور در نسخه نمایشی به‌صورت هش ساده در مرورگر نگهداری می‌شود و هیچ امنیتی برای آن تضمین نمی‌شود. هرگز از رمز عبور واقعی خود در این نسخه استفاده نکن.</p>
+        <h2>نسخه تجاری</h2>
+        <p>در نسخه PHP/MySQL، رمزها با <code>password_hash</code> ذخیره می‌شوند، ارتباط‌ها روی HTTPS انجام می‌شود و دسترسی به اطلاعات مشتریان فقط برای نقش‌های مجاز مدیریتی امکان‌پذیر است.</p>
+        <h2>حذف اطلاعات</h2>
+        <p>برای پاک‌کردن کامل اطلاعات نمایشی، داده‌های این سایت را از تنظیمات مرورگر حذف کن.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= TERMS ================= -->
+  <section class="view" data-view="/terms" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">قوانین</span>
+      <h1 class="page-title">قوانین و مقررات</h1>
+      <p class="page-sub">شرایط استفاده از فروشگاه کتاب‌خانه.</p>
+    </div>
+    <div class="container prose-layout">
+      <article class="prose card">
+        <h2>ثبت سفارش</h2>
+        <p>ثبت سفارش به معنی پذیرش قیمت‌ها و شرایط ارسال است. قیمت‌ها به تومان و شامل هزینه بسته‌بندی است.</p>
+        <h2>بازگشت کالا</h2>
+        <p>کتاب‌های آسیب‌دیده در ارسال، تا هفت روز پس از دریافت قابل تعویض هستند. کتاب‌های پلمب‌شده پس از بازکردن پلمب قابل بازگشت نیستند.</p>
+        <h2>پرداخت</h2>
+        <p>در نسخه نمایشی هیچ پرداختی انجام نمی‌شود و اطلاعات کارت بانکی دریافت نمی‌گردد. نسخه تجاری به درگاه پرداخت بانکی متصل می‌شود و تأیید پرداخت در سرور انجام می‌شود.</p>
+        <h2>مسئولیت</h2>
+        <p>اطلاعات کتاب‌های این نسخه نمونه است و ممکن است با نسخه واقعی تفاوت داشته باشد.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= ACCOUNT ================= -->
+  <section class="view" data-view="/account" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">حساب من</span>
+      <h1 class="page-title" id="accountTitle">حساب کاربری</h1>
+      <p class="page-sub">پروفایل، سفارش‌ها و نشانی‌های ارسال.</p>
+    </div>
+    <div class="container" id="accountBody"></div>
+  </section>
+
+  <!-- ================= CHECKOUT ================= -->
+  <section class="view" data-view="/checkout" hidden>
+    <div class="container page-head">
+      <span class="eyebrow">تکمیل سفارش</span>
+      <h1 class="page-title">پرداخت و ثبت سفارش</h1>
+      <p class="page-sub">اطلاعات گیرنده و نشانی ارسال را وارد کن.</p>
+    </div>
+    <div class="container" id="checkoutBody"></div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="#/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40"><path d="M7 5h11a4 4 0 0 1 4 4v25a4 4 0 0 0-4-4H7z" fill="#E7B957"/><path d="M33 5H22a4 4 0 0 0-4 4v25a4 4 0 0 1 4-4h11z" fill="#4B91FF"/></svg>
+        </span>
+        <span class="brand-text"><strong>کتاب‌خانه</strong><small>فروشگاه کتاب</small></span>
+      </a>
+      <p class="footer-tagline">کتاب، آغاز یک دنیای تازه است.</p>
+      <p class="footer-desc">دنیایی از داستان‌ها، دانایی و خیال. گزیده‌ای از کتاب‌های ناشران معتبر، با ارسال به سراسر ایران.</p>
+      <div class="social-row">
+        <a class="icon-btn" href="#/contact" aria-label="اینستاگرام"><svg class="ic"><use href="#i-instagram"/></svg></a>
+        <a class="icon-btn" href="#/contact" aria-label="تلگرام"><svg class="ic"><use href="#i-telegram"/></svg></a>
+        <a class="icon-btn" href="#/contact" aria-label="واتساپ"><svg class="ic"><use href="#i-whatsapp"/></svg></a>
+        <a class="icon-btn" href="#/contact" aria-label="ایمیل"><svg class="ic"><use href="#i-mail"/></svg></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>فروشگاه</h4>
+      <a href="#/books">همه کتاب‌ها</a>
+      <a href="#/categories">دسته‌بندی‌ها</a>
+      <a href="#/bestsellers">پرفروش‌ها</a>
+      <a href="#/offers">تخفیف‌ها</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>راهنما</h4>
+      <a href="#/about">درباره فروشگاه</a>
+      <a href="#/contact">تماس با ما</a>
+      <a href="#/guide">راهنمای خرید</a>
+      <a href="#/support">پشتیبانی</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>قوانین</h4>
+      <a href="#/terms">قوانین و مقررات</a>
+      <a href="#/privacy">حریم خصوصی</a>
+      <a href="#/guide">شرایط ارسال</a>
+      <a href="#/account">سفارش‌های من</a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>© <span id="year"></span> کتاب‌خانه — همه حقوق محفوظ است.</p>
+    <p class="footer-demo">نسخه نمایشی · پرداخت و حساب کاربری آزمایشی است</p>
+  </div>
+</footer>
+
+<!-- ============ CART DRAWER ============ -->
+<div class="scrim" id="scrim" hidden></div>
+
+<aside class="drawer" id="cartDrawer" hidden aria-label="سبد خرید" aria-modal="true" role="dialog">
+  <header class="drawer-head">
+    <div>
+      <h2>سبد خرید</h2>
+      <span class="drawer-count" id="drawerCount">۰ کتاب</span>
+    </div>
+    <button class="icon-btn" data-close-drawer aria-label="بستن سبد خرید"><svg class="ic"><use href="#i-close"/></svg></button>
+  </header>
+  <div class="drawer-body" id="cartItems"></div>
+  <footer class="drawer-foot" id="cartFoot"></footer>
+</aside>
+
+<!-- ============ BOOK MODAL ============ -->
+<div class="modal" id="bookModal" hidden role="dialog" aria-modal="true" aria-labelledby="bookModalTitle">
+  <div class="modal-panel modal-panel--book">
+    <button class="modal-close" data-close-modal aria-label="بستن"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div id="bookModalBody" class="book-detail"></div>
+  </div>
+</div>
+
+<!-- ============ AUTH MODAL ============ -->
+<div class="modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="modal-panel modal-panel--auth">
+    <button class="modal-close" data-close-modal aria-label="بستن"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div class="auth-brand">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M7 5h11a4 4 0 0 1 4 4v25a4 4 0 0 0-4-4H7z" fill="#E7B957"/><path d="M33 5H22a4 4 0 0 0-4 4v25a4 4 0 0 1 4-4h11z" fill="#4B91FF"/></svg></span>
+      <h2 id="authTitle">ورود به کتاب‌خانه</h2>
+      <p class="muted">دنیایی از داستان‌ها، دانایی و خیال</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab is-active" id="tabLogin" role="tab" aria-selected="true" type="button">ورود</button>
+      <button class="tab" id="tabRegister" role="tab" aria-selected="false" type="button">ثبت‌نام</button>
+    </div>
+
+    <form id="loginForm" class="auth-form" novalidate>
+      <div class="field">
+        <label for="loginUser">نام کاربری یا شماره موبایل</label>
+        <input id="loginUser" name="user" autocomplete="username" required>
+        <small class="err" data-err="loginUser"></small>
+      </div>
+      <div class="field">
+        <label for="loginPass">رمز عبور</label>
+        <div class="pass-wrap">
+          <input id="loginPass" name="password" type="password" autocomplete="current-password" required>
+          <button class="pass-toggle" type="button" data-toggle-pass="loginPass" aria-label="نمایش رمز عبور"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+        <small class="err" data-err="loginPass"></small>
+      </div>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">ورود به حساب</button>
+      <p class="auth-switch">حساب نداری؟ <button type="button" class="link-btn" data-auth-tab="register">ثبت‌نام کن</button></p>
+    </form>
+
+    <form id="registerForm" class="auth-form" novalidate hidden>
+      <div class="field">
+        <label for="regName">نام و نام خانوادگی</label>
+        <input id="regName" name="fullname" autocomplete="name" required>
+        <small class="err" data-err="regName"></small>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="regPhone">شماره موبایل</label>
+          <input id="regPhone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
+          <small class="err" data-err="regPhone"></small>
+        </div>
+        <div class="field">
+          <label for="regUser">نام کاربری</label>
+          <input id="regUser" name="username" autocomplete="username" required>
+          <small class="err" data-err="regUser"></small>
+        </div>
+      </div>
+      <div class="field">
+        <label for="regPass">رمز عبور</label>
+        <div class="pass-wrap">
+          <input id="regPass" name="password" type="password" autocomplete="new-password" required>
+          <button class="pass-toggle" type="button" data-toggle-pass="regPass" aria-label="نمایش رمز عبور"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+        <small class="hint">حداقل ۸ کاراکتر، شامل حرف و رقم</small>
+        <small class="err" data-err="regPass"></small>
+      </div>
+      <div class="field">
+        <label for="regPass2">تکرار رمز عبور</label>
+        <div class="pass-wrap">
+          <input id="regPass2" name="password2" type="password" autocomplete="new-password" required>
+          <button class="pass-toggle" type="button" data-toggle-pass="regPass2" aria-label="نمایش رمز عبور"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+        <small class="err" data-err="regPass2"></small>
+      </div>
+      <label class="checkline"><input type="checkbox" id="regTerms" required> <span>قوانین و حریم خصوصی کتاب‌خانه را می‌پذیرم.</span></label>
+      <small class="err" data-err="regTerms"></small>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">ساخت حساب</button>
+      <p class="auth-switch">حساب داری؟ <button type="button" class="link-btn" data-auth-tab="login">وارد شو</button></p>
+    </form>
+
+    <p class="demo-note"><svg class="ic"><use href="#i-shield"/></svg> این احراز هویت <strong>نمایشی</strong> است و امن نیست؛ اطلاعات فقط در همین مرورگر ذخیره می‌شود. برای حساب واقعی، نسخه PHP/MySQL همین پروژه را اجرا کن.</p>
+  </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<noscript>
+  <div class="noscript">برای استفاده از فروشگاه کتاب‌خانه، جاوااسکریپت مرورگر را فعال کن.</div>
+</noscript>
+
+<script src="script.js"></script>
+</body>
+</html>

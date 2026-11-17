@@ -1,0 +1,38 @@
+# کتاب‌خانه — Apache configuration for the production root
+Options -Indexes
+DirectoryIndex index.html index.php
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# فایل‌های حساس
+<FilesMatch "(^\.env|^\.env\..*|composer\.(json|lock)|\.sql|\.md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# پوشه‌های داخلی هرگز مستقیم سرو نشوند
+RedirectMatch 403 ^/(lib|sql|storage)(/|$)
+
+# HTTPS اجباری (پس از فعال‌سازی گواهی SSL)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteCond %{HTTP_HOST} !^localhost [NC]
+  RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
